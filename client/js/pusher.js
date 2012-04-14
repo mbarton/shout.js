@@ -18,7 +18,7 @@ Pusher.log = function(message)
 WEB_SOCKET_DEBUG = true;
 
 var pusher = new Pusher(pusher_key());
-var channel = pusher.subscribe("test_channel");
+var channel = pusher.subscribe("10");
 channel.bind("an_event", function(data){
-	alert(data);
+	handlePusherUpdate(data);
 });

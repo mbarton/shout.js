@@ -1,14 +1,9 @@
 var secondsPerBeat = 0.42857;
 
-var matrix = [
-	[true, false, false, false, true, false, false, false, true, false, false, false],
-	[false, false, true, false, false, false, true, false, false, false, true, false],
-	[false, false, false, false, true, false, false, false, true, false, false, false],
-	[true, false, false, false, false, false, false, false, false, false, false, false]
-];
 
 var cursor = 0;
 var timerId = -1;
+var room = -1;
 
 function setBPM(bpm)
 {
@@ -16,25 +11,17 @@ function setBPM(bpm)
 }
 
 function play()
-{
-	var triggers = $(".trigger");
-	triggers.removeClass("triggered");
-	
+{	
 	if(cursor == 12)
 	{
 		cursor = 0;
 	}
-
-	c = cursor;
-
-	while(c < triggers.length)
+	else
 	{
-		$(triggers[c]).addClass("triggered");
-
-		c += 12;
+		cursor++;
 	}
 
-	cursor++;
+	renderCursor();
 
 	timerId = setTimeout(play, (secondsPerBeat / 4.0) * 1000.0);
 }
@@ -48,35 +35,49 @@ function stop()
 function reset()
 {
 	cursor = 0;
+	// TODO: move me to UI
 	$(".trigger").removeClass("triggered");
 }
 
-function renderMatrix()
+function handleUpdate(sample, step, isEnabled)
 {
-	var x = 0;
-	var y = 0;
-	$(".trigger").each(function(){
-		if(matrix[y][x])
+	var doRender = false;
+
+	for(var i = 0; i < matrix.length; i++)
+	{
+		row = matrix[i];
+		if(row["sample"] === sample)
 		{
-			$(this).addClass("enabled");
+			if(row["triggers"][step] !== isEnabled)
+			{
+				row["triggers"][step] = isEnabled;
+				doRender = true;
+			}
 		}
-		else
-		{
-			$(this).removeClass("enabled");
-		}
-		if(x >= 11)
-		{
-			x = 0;
-			y++;
-		}
-		else
-		{
-			x++;
-		}
-	});
+	}
+
+	if(doRender)
+		renderFromMatrix();
+}
+
+function handlePusherUpdate(data)
+{
+	var sample = data["sample"];
+	var step = parseInt(data["position"]);
+	var isEnabled = data["enabled"] === "true" ? true : false;
+	
+	handleUpdate(sample, step, isEnabled);
+}
+
+function pushPusherUpdate(sample, step, isEnabled)
+{
+	var url = pusher_endpoint() + "/" + room + "/" + sample + "/" + step + "/" + isEnabled;
+	$.get(url);
 }
 
 $(function(){
+	room = window.location.hash.replace("#", "");
+
 	$("#tempo").change(function(){
 		var bpm = parseInt($(this).val());
 		if(bpm > 60 && bpm < 200)
@@ -91,5 +92,14 @@ $(function(){
 		}
 	});
 
-	renderMatrix();
+	$(".trigger").live("click", function()
+	{
+		var instrument = $(this).parent().children(".label").html();
+		var index = getIndexOfTrigger(this);
+		var isEnabled = !$(this).hasClass("enabled");
+		handleUpdate(instrument, index, isEnabled);
+		pushPusherUpdate(instrument, index, isEnabled);
+	});
+
+	renderFromMatrix();
 });
