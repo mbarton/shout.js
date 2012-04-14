@@ -19,8 +19,18 @@ WEB_SOCKET_DEBUG = true;
 
 var pusher = new Pusher(pusher_key());
 var channel = pusher.subscribe("10");
-channel.bind("an_event", function(data){
-	handlePusherUpdate(data);
+channel.bind("change", function(data){
+	handlePusherChange(data);
+});
+
+channel.bind("playback", function(data)
+{
+	handlePusherPlayback(data);
+});
+
+channel.bind("tempo", function(data)
+{
+	handlePusherTempo(data);
 });
 
 channel.bind("twilio_event", function(data)

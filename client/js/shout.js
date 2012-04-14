@@ -62,13 +62,41 @@ function handleUpdate(sample, step, isEnabled)
 		renderFromMatrix();
 }
 
-function handlePusherUpdate(data)
+function handlePusherChange(data)
 {
 	var sample = data["sample"];
 	var step = parseInt(data["position"]);
 	var isEnabled = data["enabled"] === "true" ? true : false;
 	
 	handleUpdate(sample, step, isEnabled);
+}
+
+function handlePusherPlayback(data)
+{
+	var instruction = data["state"];
+
+	if(instruction === "start")
+	{
+		play();
+	}
+	else if(instruction == "stop")
+	{
+		stop();
+	}
+}
+
+function handlePusherTempo(data)
+{
+	var tempo = data["tempo"];
+	if(tempo !== undefined)
+	{
+		var tempo = parseInt(data["tempo"]);
+		if(tempo > 60 && tempo < 200)
+		{
+			setBPM(tempo);
+			$("#tempo").parent().removeClass("error");
+		}
+	}
 }
 
 function handleTwilioUpdate(data)
@@ -90,6 +118,18 @@ function handleTwilioUpdate(data)
 function pushPusherUpdate(sample, step, isEnabled)
 {
 	var url = pusher_endpoint() + "/" + room + "/" + sample + "/" + step + "/" + isEnabled;
+	$.get(url);
+}
+
+function pushPusherPlayback(instruction, tempo)
+{
+	var url = pusher_playback_endpoint() + "/" + room + "/" + instruction;
+	$.get(url);
+}
+
+function pushPusherTempo(tempo)
+{
+	var url = pusher_tempo_endpoint() + "/" + room + "/" + tempo;
 	$.get(url);
 }
 
@@ -127,7 +167,8 @@ $(function(){
 		var bpm = parseInt($(this).val());
 		if(bpm > 60 && bpm < 200)
 		{
-			setBPM($(this).val());
+			setBPM(bpm);
+			pushPusherTempo(bpm);
 			console.log(secondsPerBeat);
 			$(this).parent().removeClass("error");
 		}
@@ -148,10 +189,12 @@ $(function(){
 
 	$("#play").click(function(){
 		play();
+		pushPusherPlayback("play");
 	});
 
 	$("#stop").click(function(){
 		stop();
+		pushPusherPlayback("stop");
 	});
 
 	loadMatrix(function()
