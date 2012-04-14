@@ -15,8 +15,8 @@ function play()
 	playStep();
 	renderCursor();
 
-	//console.log(cursor, patternLength);
-	if(cursor == patternLength - 1)
+	//console.log(cursor, matrix[0]["triggers"].length - 1);
+	if(cursor == matrix[0]["triggers"].length - 1)
 	{
 		cursor = 0;
 	}
@@ -90,7 +90,6 @@ function loadMatrix(callback)
 			if(errorMsg === undefined)
 			{
 				matrix = data;
-				patternLength = matrix[0].length;
 				callback();
 			}
 			else
