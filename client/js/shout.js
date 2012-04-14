@@ -12,7 +12,11 @@ function setBPM(bpm)
 
 function play()
 {	
-	if(cursor == 12)
+	playStep();
+	renderCursor();
+
+	console.log(cursor, patternLength);
+	if(cursor == patternLength - 1)
 	{
 		cursor = 0;
 	}
@@ -20,8 +24,6 @@ function play()
 	{
 		cursor++;
 	}
-
-	renderCursor();
 
 	timerId = setTimeout(play, (secondsPerBeat / 4.0) * 1000.0);
 }
@@ -95,11 +97,20 @@ $(function(){
 	$(".trigger").live("click", function()
 	{
 		var instrument = $(this).parent().children(".label").html();
-		var index = getIndexOfTrigger(this);
+		var index = $(this).parent().children(".trigger").index(this);
 		var isEnabled = !$(this).hasClass("enabled");
 		handleUpdate(instrument, index, isEnabled);
 		pushPusherUpdate(instrument, index, isEnabled);
 	});
 
+	$("#play").click(function(){
+		play();
+	});
+
+	$("#stop").click(function(){
+		stop();
+	});
+
 	renderFromMatrix();
+	loadAudio();
 });
