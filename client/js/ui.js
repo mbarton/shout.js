@@ -37,3 +37,29 @@ function renderFromMatrix()
 	}
 	$("#sequencer").html(temp);
 }
+
+function logInfo(msg)
+{
+	if(msg === undefined)
+	{
+		$(".error_report .label-success").hide();
+	}
+	else
+	{
+		$(".error_report .label-success").html(msg);
+		$(".error_report .label-success").show();
+	}
+}
+
+function logError(msg)
+{
+	if(msg === undefined)
+	{
+		$(".error_report .label-important").hide();
+	}
+	else
+	{
+		$(".error_report .label-important").html(msg);
+		$(".error_report .label-important").show();
+	}
+}

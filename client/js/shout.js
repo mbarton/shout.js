@@ -77,6 +77,34 @@ function pushPusherUpdate(sample, step, isEnabled)
 	$.get(url);
 }
 
+function loadMatrix(callback)
+{
+	var url = image_endpoint() + "/" + room + "/?callback=?";
+	
+	$.ajax({
+		url: url,
+		dataType: "jsonp",
+		success: function(data)
+		{
+			var errorMsg = verifyMatrix(data);
+			if(errorMsg === undefined)
+			{
+				matrix = data;
+				patternLength = matrix[0].length;
+				callback();
+			}
+			else
+			{
+				logError(errorMsg);
+			}
+		},
+		error: function(data)
+		{
+			logError("Unable to load room from the server");
+		}
+	});
+}
+
 $(function(){
 	room = window.location.hash.replace("#", "");
 
@@ -111,6 +139,10 @@ $(function(){
 		stop();
 	});
 
-	renderFromMatrix();
-	loadAudio();
+	loadMatrix(function()
+	{
+		renderFromMatrix();
+		loadAudio();
+	});
+	logInfo();
 });

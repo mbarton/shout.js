@@ -41,7 +41,11 @@
 {
 	background-color: rgb(67, 176, 48);
 }
-#audioplayer
+.error_report
 {
-	/*display: none;*/
+	float: right !important;
+}
+.error_report .label-important
+{
+	display: none;
 }

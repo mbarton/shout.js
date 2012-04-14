@@ -16,23 +16,31 @@ function loadAudio()
 	requests = []
 	for(var i = 0; i < matrix.length; i++)
 	{
-		requests[i] = new XMLHttpRequest();
-		
-		requests[i].onload = function(args)
+		if(matrix[i]["buffer"] === undefined)
 		{
-			for(var i = 0; i < requests.length; i++)
+			requests[i] = new XMLHttpRequest();
+			
+			requests[i].onload = function(args)
 			{
-				if(requests[i] === args.target)
+				for(var i = 0; i < requests.length; i++)
 				{
-					console.log("Downloaded " + i);
-					decodeAudio(i, args.target.response);
+					if(requests[i] === args.target)
+					{
+						console.log("Downloaded " + i);
+						decodeAudio(i, args.target.response);
+					}
 				}
 			}
-		}
 
-		requests[i].open('GET', matrix[i]["path"], true);
-		requests[i].responseType = 'arraybuffer';
-		requests[i].send();
+			requests[i].onerror = function(args)
+			{
+				logError("Unable to download sample " + matrix[i]["sample"]);
+			}
+
+			requests[i].open('GET', matrix[i]["path"], true);
+			requests[i].responseType = 'arraybuffer';
+			requests[i].send();
+		}
 	}
 }
 
