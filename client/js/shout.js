@@ -71,6 +71,22 @@ function handlePusherUpdate(data)
 	handleUpdate(sample, step, isEnabled);
 }
 
+function handleTwilioUpdate(data)
+{
+	var sample_path = data["url"];
+	var sample_id = data["id"];
+
+	console.log("Twilio update: " + sample_path + " , " + sample_id);
+
+	var newRowTriggers = new Array();
+	for(var i = 0; i < patternLength; i++)
+		newRowTriggers[i] = false;
+
+	var newRow = {"sample": sample_id, "path": sample_path, "triggers": newRowTriggers};
+
+	matrix[matrix.length] = newRow;
+}
+
 function pushPusherUpdate(sample, step, isEnabled)
 {
 	var url = pusher_endpoint() + "/" + room + "/" + sample + "/" + step + "/" + isEnabled;

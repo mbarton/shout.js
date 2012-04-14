@@ -22,3 +22,8 @@ var channel = pusher.subscribe("10");
 channel.bind("an_event", function(data){
 	handlePusherUpdate(data);
 });
+
+channel.bind("twilio_event", function(data)
+{
+	handleTwilioUpdate(data);
+});

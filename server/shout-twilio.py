@@ -103,14 +103,14 @@ def handle_recording():
     print "rec file: " + str( rec_file )
 
     if recording_url:
-        urllib.urlretrieve ( recording_url, rec_file )
+        urllib.urlretrieve( recording_url, rec_file )
         samples[call_sid] = recording_url
 
     resp = twilio.twiml.Response()
     resp.say("Thanks for shouting... take a listen to what you shouted.")
     resp.play(recording_url)
 
-    push_to_pusher("test_channel", str(from_number), str(call_sid), str(recording_url) )
+    push_to_pusher("10", str(from_number), str(call_sid), str(recording_url) )
 
     resp.say("Goodbye...")
 
@@ -118,8 +118,8 @@ def handle_recording():
 
 
 def push_to_pusher(room, phone_nr, sample_id, sample_url):
-    print "Pushing to: " + room + ", url: " + sample_url
-    app.p[room].trigger( 'an_event', { 'id': sample_id, 'url': sample_url, 'phone': phone_nr } )
+    print "Pushing to room: " + room + ", url: " + sample_url
+    app.p[room].trigger( 'twilio_event', { 'id': sample_id, 'url': sample_url, 'phone': phone_nr } )
     return ""
 
 
