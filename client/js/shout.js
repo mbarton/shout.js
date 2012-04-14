@@ -15,7 +15,7 @@ function play()
 	playStep();
 	renderCursor();
 
-	console.log(cursor, patternLength);
+	//console.log(cursor, patternLength);
 	if(cursor == patternLength - 1)
 	{
 		cursor = 0;
