@@ -1,11 +1,18 @@
 from flask import Flask, request, redirect, url_for, g
 import twilio.twiml
+import pusher
 import urllib
 from os import listdir
 from os.path import isfile, join
 
 app = Flask(__name__)
- 
+
+pusher.app_id = ''
+pusher.key = ''
+pusher.secret = ''
+
+app.p = pusher.Pusher()
+
 callers = {
     "+14158675309": "Curious George",
     "+14158675310": "Boots",
@@ -15,14 +22,24 @@ callers = {
 data = {
     "count": 0 
 }
- 
+
+samples = {
+}
+
+phones = {
+}
+
 @app.route("/service")
 def hello_monkey():
     from_number = request.args.get('From', None)
+    call_sid = request.args.get('CallSid', None)
     
     caller = "Shouter"
-    print "service: " + str(from_number)
+    print "Service: " + str(from_number)
  
+    phones[call_sid] = from_number
+    samples[call_sid] = "None"
+
     resp = twilio.twiml.Response()
     # Greet the caller by name
     resp.say("Hello " + caller)
@@ -73,9 +90,11 @@ def handle_recording():
 
     recording_url = request.form.get("RecordingUrl", None)
 
+    call_sid = request.form.get('CallSid', None)
+
     print "handle-recording. url: " + str( recording_url )
 
-    from_number = str( request.args.get('From', None) )
+    from_number = phones[call_sid]
     print "from_number: " + str( from_number )
     
     filename = from_number + "_" + str(count)
@@ -85,15 +104,23 @@ def handle_recording():
 
     if recording_url:
         urllib.urlretrieve ( recording_url, rec_file )
+        samples[call_sid] = recording_url
 
     resp = twilio.twiml.Response()
     resp.say("Thanks for shouting... take a listen to what you shouted.")
     resp.play(recording_url)
 
+    push_to_pusher("test_channel", str(from_number), str(call_sid), str(recording_url) )
+
     resp.say("Goodbye...")
 
     return str(resp)
 
+
+def push_to_pusher(room, phone_nr, sample_id, sample_url):
+    print "Pushing to: " + room + ", url: " + sample_url
+    app.p[room].trigger( 'an_event', { 'id': sample_id, 'url': sample_url, 'phone': phone_nr } )
+    return ""
 
 
 def increment_count():
@@ -106,6 +133,20 @@ def handle_list_rec():
     for f in listdir("static"):
         ret = ret + url_for('static', filename=str(f)) + ", "
     
+    return str(ret)
+
+@app.route("/show", methods=["GET", "POST"])
+def handle_show():
+    
+    ret = "{ samples: [\n"
+    for k in samples:
+        phone = phones[k]
+        ret += "{ id: " + k + ", phone: '" + phone + "', url: '" + samples[k] + "' }, \n"
+    
+    ret += "] \n }"
+
+    print "show: " + ret
+
     return str(ret)
 
 if __name__ == "__main__":
