@@ -13,12 +13,6 @@ pusher.secret = ''
 
 app.p = pusher.Pusher()
 
-callers = {
-    "+14158675309": "Curious George",
-    "+14158675310": "Boots",
-    "+14158675311": "Virgil",
-}
-
 data = {
     "count": 0 
 }
@@ -89,7 +83,6 @@ def handle_recording():
     count = increment_count()
 
     recording_url = request.form.get("RecordingUrl", None)
-
     call_sid = request.form.get('CallSid', None)
 
     print "handle-recording. url: " + str( recording_url )
@@ -97,14 +90,14 @@ def handle_recording():
     from_number = phones[call_sid]
     print "from_number: " + str( from_number )
     
-    filename = from_number + "_" + str(count)
+    filename = call_sid + ".mp3"
 
-    rec_file = "static/%s.mp3" % filename;
+    rec_file = "static/" + filename;
     print "rec file: " + str( rec_file )
 
     if recording_url:
         urllib.urlretrieve( recording_url, rec_file )
-        samples[call_sid] = recording_url
+        samples[call_sid] = url_for('static', filename=filename)
 
     resp = twilio.twiml.Response()
     resp.say("Thanks for shouting... take a listen to what you shouted.")
@@ -121,7 +114,6 @@ def push_to_pusher(room, phone_nr, sample_id, sample_url):
     print "Pushing to room: " + room + ", url: " + sample_url
     app.p[room].trigger( 'twilio_event', { 'id': sample_id, 'url': sample_url, 'phone': phone_nr } )
     return ""
-
 
 def increment_count():
     data["count"] = data["count"] + 1
