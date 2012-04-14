@@ -1,0 +1,42 @@
+.container
+{
+	width: 1100px;
+}
+.sequencer.row
+{
+	clear: both;
+	margin-bottom: 20px;
+}
+#push_down
+{
+	margin-top: 50px;
+}
+.span1
+{
+	background-color: gray;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	text-align: center;
+	border-radius: 5px;
+}
+.span1.label
+{
+	color: white;
+}
+.trigger
+{
+	cursor: pointer;
+	/*-webkit-transition: background-color .2s;*/
+}
+.trigger:hover
+{
+	background-color: silver;
+}
+.trigger.triggered
+{
+	background-color: rgb(255, 231, 4) !important;
+}
+.trigger.enabled
+{
+	background-color: rgb(67, 176, 48);
+}
