@@ -91,7 +91,12 @@ def handle_recording():
     from_number = phones[call_sid]
     print "from_number: " + str( from_number )
     
-    filename = call_sid + ".mp3"
+    if from_number:
+        sample_id = from_number
+    else:
+        sample_id = call_sid
+
+    filename = sample_id + ".mp3"
 
     rec_file = "static/" + filename;
     print "rec file: " + str( rec_file )
@@ -104,7 +109,7 @@ def handle_recording():
     resp.say("Thanks for shouting.")
     # resp.play(recording_url)
 
-    push_to_pusher("twilio", str(from_number), str(call_sid), str(samples[call_sid]) )
+    push_to_pusher("twilio", str(from_number), str(sample_id), str(samples[call_sid]) )
 
     resp.say("Check the app for your shout.")
 
@@ -165,20 +170,6 @@ def handle_show():
     print "show: " + ret
 
     return str(ret)
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def handle_root(path):
-    print "requesting: " + path
-
-    if path:
-        path = "../client/" + path
-    else:
-        path = "../client/index.html"
-
-    f = open(path)
-
-    return f.read()
 
 if __name__ == "__main__":
     read_samples()
