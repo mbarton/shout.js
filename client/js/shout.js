@@ -106,6 +106,21 @@ function handlePusherTempo(data)
 	}
 }
 
+function handlePusherNewSample(data)
+{
+	if(!trackExists(data["sample"]))
+	{
+		var triggers = [];
+		for(var i = 0; i < matrix[0].triggers.length; i++)
+		{
+			triggers.push(false);
+		}
+		matrix.push({"sample": data["sample"], "path": data["path"], "triggers": triggers});
+		loadAudio(matrix.length);
+		renderFromMatrix();
+	}
+}
+
 function handleTwilioUpdate(data)
 {
 	var sample_path = data["url"];
@@ -223,13 +238,13 @@ $(function(){
 	});
 
 	$("#play").click(function(){
-		//play();
-		pushPusherPlayback("start");
+		play();
+		//pushPusherPlayback("start");
 	});
 
 	$("#stop").click(function(){
-		//stop();
-		pushPusherPlayback("stop");
+		stop();
+		//pushPusherPlayback("stop");
 	});
 
 	$("a.change_sample").live("click", function(){
@@ -242,6 +257,10 @@ $(function(){
 
 	$("#add_track").click(function(){
 		var sample = $(".dropdown-toggle").html();
+
+		if(trackExists(sample))
+			return;
+
 		var triggers = [];
 		for(var i = 0; i < matrix[0].triggers.length; i++)
 		{
@@ -286,11 +305,11 @@ $(function(){
 		renderSampleChooser();
 	});
 
-	loadMatrix(function()
-	{
+	// loadMatrix(function()
+	// {
 		renderSampleChooser();
 		renderFromMatrix();
 		loadAudio();
-	});
+	// });
 	logInfo();
 });

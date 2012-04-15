@@ -35,6 +35,11 @@ channel.bind("tempo", function(data)
 	handlePusherTempo(data);
 });
 
+channel.bind("newsample", function(data)
+{
+	handlePusherNewSample(data);
+})
+
 var twilio_channel_name = "twilio"
 console.log("Subscribing to Pusher channel: " + twilio_channel_name);
 var twilio_channel = pusher.subscribe( twilio_channel_name );

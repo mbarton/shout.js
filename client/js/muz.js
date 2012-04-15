@@ -9,37 +9,30 @@ function decodeAudio(index, response)
 	});
 }
 
+function loadSample(index, path)
+{
+	var request = new XMLHttpRequest();
+	request.onload = function(args)
+	{
+		console.log("Downloaded " + index);
+		decodeAudio(index, args.target.response);
+	}
+	request.onerror = function(args)
+	{
+		logError("Unable to download sample " + matrix[index]["sample"]);
+	}
+	request.open('GET', path, true);
+	request.responseType = 'arraybuffer';
+	request.send();
+}
+
 function loadAudio()
 {
-	// Value types, value types my kingdom for some value types!
-	// This only works by black magic, soz
-	requests = []
 	for(var i = 0; i < matrix.length; i++)
 	{
-		if(matrix[i]["buffer"] === undefined)
+		if(matrix[i].buffer === undefined)
 		{
-			requests[i] = new XMLHttpRequest();
-			
-			requests[i].onload = function(args)
-			{
-				for(var i = 0; i < requests.length; i++)
-				{
-					if(requests[i] === args.target)
-					{
-						console.log("Downloaded " + i);
-						decodeAudio(i, args.target.response);
-					}
-				}
-			}
-
-			requests[i].onerror = function(args)
-			{
-				logError("Unable to download sample " + matrix[i]["sample"]);
-			}
-
-			requests[i].open('GET', matrix[i]["path"], true);
-			requests[i].responseType = 'arraybuffer';
-			requests[i].send();
+			loadSample(i, matrix[i].path);
 		}
 	}
 }
@@ -49,7 +42,7 @@ function playStep()
 	var players = $("audio");
 	for(var i = 0; i < matrix.length; i++)
 	{
-		if(matrix[i]["triggers"][cursor])
+		if(matrix[i]["triggers"][cursor] && matrix[i].buffer)
 		{
 			source = audioContext.createBufferSource();
 			source.buffer = matrix[i]["buffer"];
