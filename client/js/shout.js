@@ -305,11 +305,10 @@ $(function(){
 		renderSampleChooser();
 	});
 
-	// loadMatrix(function()
-	// {
-		renderSampleChooser();
+	loadMatrix(function()
+	{
 		renderFromMatrix();
 		loadAudio();
-	// });
+	});
 	logInfo();
 });
