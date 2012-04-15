@@ -104,7 +104,7 @@ def handle_recording():
     resp.say("Thanks for shouting... take a listen to what you shouted.")
     resp.play(recording_url)
 
-    push_to_pusher("samples", str(from_number), str(call_sid), str(recording_url) )
+    push_to_pusher("twilio", str(from_number), str(call_sid), str(samples[call_sid]) )
 
     resp.say("Goodbye...")
 
@@ -117,7 +117,7 @@ def push_to_pusher(room, phone_nr, sample_id, sample_url):
     return ""
 
 def increment_count():
-    data["count"] = data["count"] + 1
+    data["count"] += 1
     return data["count"]
 
 @app.route("/list", methods=["GET", "POST"])
