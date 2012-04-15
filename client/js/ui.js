@@ -73,11 +73,12 @@ function renderFromMatrix()
 
 function renderSampleChooser()
 {
-	$(".dropdown-toggle").html("" + samples[0].id);
+	//$(".dropdown-toggle").html("" + samples[0].id);
+	$(".dropdown-toggle").html("Select sample:");
 	$(".dropdown-menu").html("");
 	for(var i = 0; i < samples.length; i++)
 	{
-		$(".dropdown-menu").append("<li><a class=\"sample-chooser\" href=\"#\">" + samples[i].id + "<a/></li>");
+		$(".dropdown-menu").append("<li><a class=\"sample-chooser\" href=\"#" + room + "\">" + samples[i].id + "<a/></li>");
 	}
 }
 

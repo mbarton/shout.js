@@ -171,6 +171,30 @@ function loadMatrix(callback)
 	});
 }
 
+function loadSamples(callback)
+{
+	var url = sample_endpoint();
+
+	$.ajax({
+		url: url,
+		dataType: "jsonp",
+		success: function(data)
+		{
+			var new_samples = data["samples"];
+			for(var i = 0; i < new_samples.length; i++)
+			{
+				var sample = new_samples[i];
+				samples.push({"id": sample["id"], "path": sample["url"]})
+			}
+			callback();
+		},
+		error: function(data)
+		{
+			logError("Unable to load twilio samples from the server");
+		}
+	})
+}
+
 var room = window.location.hash.replace("#", "");
 
 $(function(){
@@ -225,7 +249,32 @@ $(function(){
 		}
 		matrix.push({"sample": sample, "triggers": triggers});
 		renderFromMatrix();
-	});
+
+		// Update server
+		var path = -1;
+		for(var i = 0; i < samples.length; i++)
+		{
+			var this_sample = samples[i];
+			if(this_sample.id === sample)
+			{
+				path = this_sample.path;
+				break;
+			}
+		}
+		if(path === -1)
+		{
+			logError("Couldn't find path for sample " + sample);
+		}
+		else
+		{
+			var url = new_sample_endpoint() + "/" + room + "/" + sample;
+			$.ajax({
+				url: url,
+				type: "POST",
+				data: {"filepath": path}
+			});
+		}
+ 	});
 
 	$(".sample-chooser").live("click", function(){
 		var sample = $(this).html();
@@ -233,11 +282,15 @@ $(function(){
 		dropper.children(".dropdown-toggle").html(sample);
 	});
 
-	// loadMatrix(function()
-	// {
+	loadSamples(function(){
+		renderSampleChooser();
+	});
+
+	loadMatrix(function()
+	{
 		renderSampleChooser();
 		renderFromMatrix();
 		loadAudio();
-	// });
+	});
 	logInfo();
 });
