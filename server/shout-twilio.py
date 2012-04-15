@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, g
+from flask import Flask, request, redirect, url_for, g, current_app
 import twilio.twiml
 import pusher
 import urllib
@@ -60,7 +60,7 @@ def handle_key():
     if digit_pressed == "2":
         resp = twilio.twiml.Response()
         # Dial (310) 555-1212 - connect that number to the incoming caller.
-        resp.dial("+447950145808")
+        resp.dial("07950145808")
         # If the dial fails:
         resp.say("The call failed, or the remote party hung up. Goodbye.")
  
@@ -91,7 +91,12 @@ def handle_recording():
     from_number = phones[call_sid]
     print "from_number: " + str( from_number )
     
-    filename = call_sid + ".mp3"
+    if from_number:
+        sample_id = from_number
+    else:
+        sample_id = call_sid
+
+    filename = sample_id + ".mp3"
 
     rec_file = "static/" + filename;
     print "rec file: " + str( rec_file )
@@ -101,10 +106,12 @@ def handle_recording():
         samples[call_sid] = url_for('static', filename=filename)
 
     resp = twilio.twiml.Response()
-    resp.say("Thanks for shouting... take a listen to what you shouted.")
-    resp.play(recording_url)
+    resp.say("Thanks for shouting.")
+    # resp.play(recording_url)
 
-    push_to_pusher("twilio", str(from_number), str(call_sid), str(samples[call_sid]) )
+    push_to_pusher("twilio", str(from_number), str(sample_id), str(samples[call_sid]) )
+
+    resp.say("Check the app for your shout.")
 
     resp.say("Goodbye...")
 
@@ -133,13 +140,13 @@ def handle_list():
 @app.route('/get/twilio', methods=['GET'])
 def get_twilio():
     callback = request.args.get('callback', False)
-    content = handle_show()
+    json_str = handle_show()
 
     if callback:
-      content = str(callback) + '(' + json.dumps( content ) + ')'
+      content = str(callback) + '(' + json_str + ')'
       return current_app.response_class(content, mimetype='application/json')
 
-    return json.dumps( content )
+    return json_str
 
 def read_samples():
     i = 1
@@ -156,27 +163,13 @@ def handle_show():
     ret = "{ samples: ["
     for k in samples:
         phone = str(phones[k])
-        ret += "{ id: " + str(k) + ", phone: '" + phone + "', url: '" + str( samples[k] ) + "' }, "
+        ret += "{ id: '" + str(k) + "', phone: '" + phone + "', url: '" + str( samples[k] ) + "' }, "
     
     ret += "]  }"
 
     print "show: " + ret
 
     return str(ret)
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def handle_root(path):
-    print "requesting: " + path
-
-    if path:
-        path = "../client/" + path
-    else:
-        path = "../client/index.html"
-
-    f = open(path)
-
-    return f.read()
 
 if __name__ == "__main__":
     read_samples()
