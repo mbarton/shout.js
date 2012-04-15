@@ -111,15 +111,19 @@ function handleTwilioUpdate(data)
 	var sample_path = data["url"];
 	var sample_id = data["id"];
 
+	samples.push({"id": sample_id, "path": sample_path});
+
 	console.log("Twilio update: " + sample_path + " , " + sample_id);
 
-	var newRowTriggers = new Array();
-	for(var i = 0; i < patternLength; i++)
-		newRowTriggers[i] = false;
+	renderSampleChooser();
 
-	var newRow = {"sample": sample_id, "path": sample_path, "triggers": newRowTriggers};
+	// var newRowTriggers = new Array();
+	// for(var i = 0; i < patternLength; i++)
+	// 	newRowTriggers[i] = false;
 
-	matrix[matrix.length] = newRow;
+	// var newRow = {"sample": sample_id, "path": sample_path, "triggers": newRowTriggers};
+
+	// matrix[matrix.length] = newRow;
 }
 
 function pushPusherUpdate(sample, step, isEnabled)
@@ -213,27 +217,27 @@ $(function(){
 	});
 
 	$("#add_track").click(function(){
-		var defaultSample = samples[0]["id"];
+		var sample = $(".dropdown-toggle").html();
 		var triggers = [];
 		for(var i = 0; i < matrix[0].triggers.length; i++)
 		{
 			triggers.push(false);
 		}
-		matrix.push({"sample": defaultSample, "triggers": triggers});
+		matrix.push({"sample": sample, "triggers": triggers});
 		renderFromMatrix();
 	});
 
 	$(".sample-chooser").live("click", function(){
 		var sample = $(this).html();
 		var dropper = $(this).parent().parent().parent();
-		dropper.children(".dropdown-toggle").html(sample + "<span class=\"caret\"></span>");
+		dropper.children(".dropdown-toggle").html(sample);
 	});
 
-	loadMatrix(function()
-	{
+	// loadMatrix(function()
+	// {
 		renderSampleChooser();
 		renderFromMatrix();
 		loadAudio();
-	});
+	// });
 	logInfo();
 });
