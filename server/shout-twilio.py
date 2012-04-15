@@ -2,14 +2,15 @@ from flask import Flask, request, redirect, url_for, g
 import twilio.twiml
 import pusher
 import urllib
+import json
 from os import listdir
 from os.path import isfile, join
 
 app = Flask(__name__)
 
-pusher.app_id = ''
-pusher.key = ''
-pusher.secret = ''
+pusher.app_id = '18530'
+pusher.key = '79a35f6a8db88187adb6'
+pusher.secret = 'a719ef391208056aa57c'
 
 app.p = pusher.Pusher()
 
@@ -103,7 +104,7 @@ def handle_recording():
     resp.say("Thanks for shouting... take a listen to what you shouted.")
     resp.play(recording_url)
 
-    push_to_pusher("10", str(from_number), str(call_sid), str(recording_url) )
+    push_to_pusher("samples", str(from_number), str(call_sid), str(recording_url) )
 
     resp.say("Goodbye...")
 
@@ -120,27 +121,64 @@ def increment_count():
     return data["count"]
 
 @app.route("/list", methods=["GET", "POST"])
-def handle_list_rec():
-    ret = ""
+def handle_list():
+    ret = "{ samples: [\n"
     for f in listdir("static"):
         ret = ret + url_for('static', filename=str(f)) + ", "
-    
+        
+    ret += "}"
+
     return str(ret)
+
+@app.route('/get/twilio', methods=['GET'])
+def get_twilio():
+    callback = request.args.get('callback', False)
+    content = handle_show()
+
+    if callback:
+      content = str(callback) + '(' + json.dumps( content ) + ')'
+      return current_app.response_class(content, mimetype='application/json')
+
+    return json.dumps( content )
+
+def read_samples():
+    i = 1
+    for f in listdir("static"):
+        samples[i] = 'static/' + f
+        phones[i] = ""
+        i += 1
+
+    return ""
 
 @app.route("/show", methods=["GET", "POST"])
 def handle_show():
     
-    ret = "{ samples: [\n"
+    ret = "{ samples: ["
     for k in samples:
-        phone = phones[k]
-        ret += "{ id: " + k + ", phone: '" + phone + "', url: '" + samples[k] + "' }, \n"
+        phone = str(phones[k])
+        ret += "{ id: " + str(k) + ", phone: '" + phone + "', url: '" + str( samples[k] ) + "' }, "
     
-    ret += "] \n }"
+    ret += "]  }"
 
     print "show: " + ret
 
     return str(ret)
 
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def handle_root(path):
+    print "requesting: " + path
+
+    if path:
+        path = "../client/" + path
+    else:
+        path = "../client/index.html"
+
+    f = open(path)
+
+    return f.read()
+
 if __name__ == "__main__":
+    read_samples()
     app.debug = True
     app.run(host="0.0.0.0")
