@@ -266,8 +266,6 @@ $(function(){
 		{
 			triggers.push(false);
 		}
-		matrix.push({"sample": sample, "triggers": triggers});
-		renderFromMatrix();
 
 		// Update server
 		var path = -1;
@@ -280,6 +278,12 @@ $(function(){
 				break;
 			}
 		}
+
+		matrix.push({"sample": sample, "path": path, "triggers": triggers});
+		loadAudio();
+		renderFromMatrix();
+
+		
 		if(path === -1)
 		{
 			logError("Couldn't find path for sample " + sample);

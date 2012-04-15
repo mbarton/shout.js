@@ -11,29 +11,29 @@ function decodeAudio(index, response)
 
 function loadSample(index, path)
 {
-	var request = new XMLHttpRequest();
-	request.onload = function(args)
+	if(matrix[index].buffer === undefined)
 	{
-		console.log("Downloaded " + index);
-		decodeAudio(index, args.target.response);
+		var request = new XMLHttpRequest();
+		request.onload = function(args)
+		{
+			console.log("Downloaded " + index);
+			decodeAudio(index, args.target.response);
+		}
+		request.onerror = function(args)
+		{
+			logError("Unable to download sample " + matrix[index]["sample"]);
+		}
+		request.open('GET', path, true);
+		request.responseType = 'arraybuffer';
+		request.send();
 	}
-	request.onerror = function(args)
-	{
-		logError("Unable to download sample " + matrix[index]["sample"]);
-	}
-	request.open('GET', path, true);
-	request.responseType = 'arraybuffer';
-	request.send();
 }
 
 function loadAudio()
 {
 	for(var i = 0; i < matrix.length; i++)
 	{
-		if(matrix[i].buffer === undefined)
-		{
-			loadSample(i, matrix[i].path);
-		}
+		loadSample(i, matrix[i].path);
 	}
 }
 
