@@ -5,6 +5,8 @@
 	<link rel="stylesheet" href="css/bootstrap.css" />
 	<link rel="stylesheet" href="css/shout.js.css" />
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="js/bootstrap-dropdown.js"></script>
+	<script src="js/bootstrap-modal.js"></script>
 	<script src="http://js.pusher.com/1.11/pusher.min.js"></script>
 	<script type="text/javascript" src="js/matrix.js"></script>
 	<script type="text/javascript" src="js/ui.js"></script>
@@ -31,10 +33,19 @@
 		<div class="span2">
 			<h3>Realtime Room</h3>
 		</div>
-		<div class="span6">
+		<div class="span2">
 			<div class="btn-group">
 				<button id="play" class="btn"><img src="img/play.png" /></button>
 				<button id="stop" class="btn"><img src="img/stop.png" /></button>
+			</div>
+		</div>
+		<div class="span4">
+			<div class="btn-group">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				</a>
+				<ul class="dropdown-menu">
+				</ul>
+				<button id="add_track" class="btn"><img src="img/add.png" /></button>
 			</div>
 		</div>
 		<div class="span2">

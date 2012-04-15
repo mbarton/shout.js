@@ -13,6 +13,14 @@
 var matrix = [];
 var patternLength = 0;
 
+var  samples = [
+	{"id": "kick", "path": "samples/kick.mp3"},
+	{"id": "hat", "path": "samples/hat.mp3"},
+	{"id": "snare", "path": "samples/snare.mp3"},
+	{"id": "crash", "path": "samples/crash.mp3"},
+];
+//var samples = [];
+
 function verifyMatrix(matrix)
 {
 	if(matrix.length === 0)

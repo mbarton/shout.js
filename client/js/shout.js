@@ -62,6 +62,12 @@ function handleUpdate(sample, step, isEnabled)
 		renderFromMatrix();
 }
 
+function handleInstrumentUpdate(index, sample)
+{
+	matrix[index].sample = sample;
+	renderFromMatrix();
+}
+
 function handlePusherChange(data)
 {
 	var sample = data["sample"];
@@ -94,6 +100,7 @@ function handlePusherTempo(data)
 		if(tempo > 60 && tempo < 200)
 		{
 			setBPM(tempo);
+			$("#tempo").val(tempo);
 			$("#tempo").parent().removeClass("error");
 		}
 	}
@@ -160,9 +167,9 @@ function loadMatrix(callback)
 	});
 }
 
-$(function(){
-	room = window.location.hash.replace("#", "");
+var room = window.location.hash.replace("#", "");
 
+$(function(){
 	$("#tempo").change(function(){
 		var bpm = parseInt($(this).val());
 		if(bpm > 60 && bpm < 200)
@@ -188,17 +195,43 @@ $(function(){
 	});
 
 	$("#play").click(function(){
-		play();
-		pushPusherPlayback("play");
+		//play();
+		pushPusherPlayback("start");
 	});
 
 	$("#stop").click(function(){
-		stop();
+		//stop();
 		pushPusherPlayback("stop");
+	});
+
+	$("a.change_sample").live("click", function(){
+		var sample = $(this).html();
+		var parentLabel = $(this).parent().parent().parent().parent();
+		var index = $(".label").index(parentLabel) - 2;
+		console.log(index, sample);
+		handleInstrumentUpdate(index, sample);
+	});
+
+	$("#add_track").click(function(){
+		var defaultSample = samples[0]["id"];
+		var triggers = [];
+		for(var i = 0; i < matrix[0].triggers.length; i++)
+		{
+			triggers.push(false);
+		}
+		matrix.push({"sample": defaultSample, "triggers": triggers});
+		renderFromMatrix();
+	});
+
+	$(".sample-chooser").live("click", function(){
+		var sample = $(this).html();
+		var dropper = $(this).parent().parent().parent();
+		dropper.children(".dropdown-toggle").html(sample + "<span class=\"caret\"></span>");
 	});
 
 	loadMatrix(function()
 	{
+		renderSampleChooser();
 		renderFromMatrix();
 		loadAudio();
 	});

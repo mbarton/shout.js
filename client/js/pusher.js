@@ -10,6 +10,8 @@
 //    channel.bind('my_event', function(data) {
 //      alert(data);
 //    });
+var room = window.location.hash.replace("#", "");
+
 Pusher.log = function(message)
 {
 	console.log(message);
@@ -18,7 +20,7 @@ Pusher.log = function(message)
 WEB_SOCKET_DEBUG = true;
 
 var pusher = new Pusher(pusher_key());
-var channel = pusher.subscribe("10");
+var channel = pusher.subscribe(room);
 channel.bind("change", function(data){
 	handlePusherChange(data);
 });
