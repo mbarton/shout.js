@@ -8,9 +8,9 @@ from os.path import isfile, join
 
 app = Flask(__name__)
 
-pusher.app_id = '18530'
-pusher.key = '79a35f6a8db88187adb6'
-pusher.secret = 'a719ef391208056aa57c'
+pusher.app_id = ''
+pusher.key = ''
+pusher.secret = ''
 
 app.p = pusher.Pusher()
 
@@ -60,7 +60,7 @@ def handle_key():
     if digit_pressed == "2":
         resp = twilio.twiml.Response()
         # Dial (310) 555-1212 - connect that number to the incoming caller.
-        resp.dial("07950145808")
+        resp.dial("12345678")
         # If the dial fails:
         resp.say("The call failed, or the remote party hung up. Goodbye.")
  
