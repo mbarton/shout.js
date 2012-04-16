@@ -4,7 +4,7 @@ import pusher
 import urllib
 import json
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, splitext
 
 app = Flask(__name__)
 
@@ -14,31 +14,21 @@ pusher.secret = ''
 
 app.p = pusher.Pusher()
 
-data = {
-    "count": 0 
-}
-
-samples = {
-}
-
-phones = {
-}
+samples = {}
+phones = {}
 
 @app.route("/service")
 def hello_monkey():
     from_number = request.args.get('From', None)
     call_sid = request.args.get('CallSid', None)
     
-    caller = "Shouter"
     print "Service: " + str(from_number)
  
     phones[call_sid] = from_number
-    samples[call_sid] = "None"
-
+    
     resp = twilio.twiml.Response()
     # Greet the caller by name
-    resp.say("Hello " + caller)
-    # Play an mp3
+    resp.say("Hello shouter")
     # resp.play("http://demo.twilio.com/hellomonkey/monkey.mp3")
  
     # Gather digits.
@@ -55,12 +45,12 @@ def handle_key():
  
     digit_pressed = request.args.get('Digits', None)
 
-    print "handle-key. key: " + str(digit_pressed)
-
     if digit_pressed == "2":
         resp = twilio.twiml.Response()
         # Dial (310) 555-1212 - connect that number to the incoming caller.
+
         resp.dial("12345678")
+
         # If the dial fails:
         resp.say("The call failed, or the remote party hung up. Goodbye.")
  
@@ -68,8 +58,8 @@ def handle_key():
  
     elif digit_pressed == "1":
         resp = twilio.twiml.Response()
-        resp.say("Record your shout after the tone. You have 3 seconds.")
-        resp.record(maxLength="3", action="/handle-recording")
+        resp.say("You have 2 seconds to record your shout after the tone.")
+        resp.record(maxLength="2", action="/handle-recording")
         return str(resp)
  
     # If the caller pressed anything but 1, redirect them to the homepage.
@@ -80,40 +70,30 @@ def handle_key():
 @app.route("/handle-recording", methods=["GET", "POST"])
 def handle_recording():
     """Play back the caller's recording."""
- 
-    count = increment_count()
 
     recording_url = request.form.get("RecordingUrl", None)
-    call_sid = request.form.get('CallSid', None)
+    call_sid = request.form.get('CallSid', "test")
 
     print "handle-recording. url: " + str( recording_url )
 
     from_number = phones[call_sid]
     print "from_number: " + str( from_number )
     
-    if from_number:
-        sample_id = from_number
-    else:
-        sample_id = call_sid
-
+    sample_id = call_sid
     filename = sample_id + ".mp3"
-
     rec_file = "static/" + filename;
-    print "rec file: " + str( rec_file )
+    print "rec file: " + rec_file
 
     if recording_url:
-        urllib.urlretrieve( recording_url, rec_file )
+        urllib.urlretrieve( recording_url, rec_file ) # download file localy
         samples[call_sid] = url_for('static', filename=filename)
+        push_to_pusher("twilio", str(from_number), str(sample_id), str(samples[call_sid]) )
 
     resp = twilio.twiml.Response()
     resp.say("Thanks for shouting.")
     # resp.play(recording_url)
-
-    push_to_pusher("twilio", str(from_number), str(sample_id), str(samples[call_sid]) )
-
     resp.say("Check the app for your shout.")
-
-    resp.say("Goodbye...")
+    resp.say("Goodbye.")
 
     return str(resp)
 
@@ -121,20 +101,18 @@ def handle_recording():
 def push_to_pusher(room, phone_nr, sample_id, sample_url):
     print "Pushing to room: " + room + ", url: " + sample_url
     app.p[room].trigger( 'twilio_event', { 'id': sample_id, 'url': sample_url, 'phone': phone_nr } )
-    return ""
 
-def increment_count():
-    data["count"] += 1
-    return data["count"]
+@app.route("/repush", methods=["GET", "POST"])
+def repush():
+    lastkey = samples.keys().pop(0)
+    push_to_pusher("twilio", "None", str(lastkey), str(samples[lastkey]) )
 
 @app.route("/list", methods=["GET", "POST"])
 def handle_list():
     ret = "{ samples: [\n"
     for f in listdir("static"):
         ret = ret + url_for('static', filename=str(f)) + ", "
-        
     ret += "}"
-
     return str(ret)
 
 @app.route('/get/twilio', methods=['GET'])
@@ -148,28 +126,21 @@ def get_twilio():
 
     return json_str
 
-def read_samples():
-    i = 1
-    for f in listdir("static"):
-        samples[i] = 'static/' + f
-        phones[i] = ""
-        i += 1
-
-    return ""
-
 @app.route("/show", methods=["GET", "POST"])
-def handle_show():
-    
+def handle_show():    
     ret = "{ samples: ["
     for k in samples:
         phone = str(phones[k])
         ret += "{ id: '" + str(k) + "', phone: '" + phone + "', url: '" + str( samples[k] ) + "' }, "
-    
     ret += "]  }"
 
-    print "show: " + ret
-
     return str(ret)
+
+def read_samples():
+    for f in listdir("static"):
+        fname = splitext(f)[0]
+        samples[fname] = 'static/' + f
+        phones[fname] = ""
 
 if __name__ == "__main__":
     read_samples()
