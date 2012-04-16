@@ -10,6 +10,8 @@
 //    channel.bind('my_event', function(data) {
 //      alert(data);
 //    });
+var room = window.location.hash.replace("#", "");
+
 Pusher.log = function(message)
 {
 	console.log(message);
@@ -18,12 +20,30 @@ Pusher.log = function(message)
 WEB_SOCKET_DEBUG = true;
 
 var pusher = new Pusher(pusher_key());
-var channel = pusher.subscribe("10");
-channel.bind("an_event", function(data){
-	handlePusherUpdate(data);
+var channel = pusher.subscribe(room);
+channel.bind("change", function(data){
+	handlePusherChange(data);
 });
 
-channel.bind("twilio_event", function(data)
+channel.bind("playback", function(data)
+{
+	handlePusherPlayback(data);
+});
+
+channel.bind("tempo", function(data)
+{
+	handlePusherTempo(data);
+});
+
+channel.bind("newsample", function(data)
+{
+	handlePusherNewSample(data);
+})
+
+var twilio_channel_name = "twilio"
+console.log("Subscribing to Pusher channel: " + twilio_channel_name);
+var twilio_channel = pusher.subscribe( twilio_channel_name );
+twilio_channel.bind("twilio_event", function(data)
 {
 	handleTwilioUpdate(data);
 });

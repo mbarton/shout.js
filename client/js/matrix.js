@@ -13,6 +13,26 @@
 var matrix = [];
 var patternLength = 0;
 
+var samples = [
+	// {"id": "kick", "path": "samples/kick.mp3"},
+	// {"id": "hat", "path": "samples/hat.mp3"},
+	// {"id": "snare", "path": "samples/snare.mp3"},
+	// {"id": "crash", "path": "samples/crash.mp3"},
+];
+//var samples = [];
+
+function trackExists(sample)
+{
+	for(var i = 0; i < matrix.length; i++)
+	{
+		if(matrix[i].sample === sample)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 function verifyMatrix(matrix)
 {
 	if(matrix.length === 0)

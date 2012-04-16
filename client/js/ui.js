@@ -1,16 +1,49 @@
+function generateSampleSelecter(sample)
+{
+	// var ret = "<div class=\"label span1\">";
+	// ret += "<div class=\"btn-group\">";
+	// ret += "<a class=\"btn dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">"
+	// ret += "" + sample + "<span class=\"caret\"></span>";
+	// ret += "</a>";
+	// ret += "<ul class=\"dropdown-menu\">";
+	// for(var i = 0; i < samples.length; i++)
+	// {
+	// 	var sample = samples[i];
+	// 	ret += "<li><a class=\"change_sample\" href=\"#\">" + sample["id"] + "</a></li>";
+	// }
+	// ret += "<li class=\"divider\"></li><a href=\"#\">Remove</a>";
+	// ret += "</ul>";
+	// ret += "</div></div>";
+	// return ret;
+	var ret = "<div class=\"label span1\">";
+	ret += sample;
+	ret += "</div>";
+	return ret;
+}
+
 function generateRow(sample, arr)
 {
 	var ret = "<div id=\"push_down\" class=\"track row\">";
-	ret += "<div class=\"label span1\">" + sample + "</div>";
-	for(var i = 0; i < arr.length; i++)
+	ret += generateSampleSelecter(sample);
+	if(arr === undefined)
 	{
-		if(arr[i])
-		{
-			ret += "<div class=\"trigger span1 enabled\">&nbsp;</div>";
-		}
-		else
+		for(var i = 0; i < matrix[0]["triggers"].length; i++)
 		{
 			ret += "<div class=\"trigger span1\">&nbsp;</div>";
+		}
+	}
+	else
+	{
+		for(var i = 0; i < arr.length; i++)
+		{
+			if(arr[i])
+			{
+				ret += "<div class=\"trigger span1 enabled\">&nbsp;</div>";
+			}
+			else
+			{
+				ret += "<div class=\"trigger span1\">&nbsp;</div>";
+			}
 		}
 	}
 	ret += "</div>";
@@ -36,6 +69,17 @@ function renderFromMatrix()
 		temp += generateRow(matrix[y]["sample"], matrix[y]["triggers"]);
 	}
 	$("#sequencer").html(temp);
+}
+
+function renderSampleChooser()
+{
+	//$(".dropdown-toggle").html("" + samples[0].id);
+	$(".dropdown-toggle").html("Select sample:");
+	$(".dropdown-menu").html("");
+	for(var i = 0; i < samples.length; i++)
+	{
+		$(".dropdown-menu").append("<li><a class=\"sample-chooser\" href=\"#" + room + "\">" + samples[i].id + "<a/></li>");
+	}
 }
 
 function logInfo(msg)
