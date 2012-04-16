@@ -239,11 +239,11 @@ function loadPage(room)
 			renderSampleChooser();
 		});
 
-		// loadMatrix(function()
-		// {
+		loadMatrix(function()
+		{
 			renderFromMatrix();
 			loadAudio();
-		// });
+		});
 	}
 }
 
