@@ -6,6 +6,20 @@ function decodeAudio(index, response)
 	{
 		console.log("Decoded " + index);
 		matrix[index]["buffer"] = buf;
+
+		// Get rid of the loading bit if everything is done
+		var loaded = 0;
+		for(var i = 0; i < matrix.length; i++)
+		{
+			if(matrix[i].buffer)
+			{
+				loaded++;
+			}
+		}
+		if(loaded === matrix.length)
+		{
+			logInfo();
+		}
 	});
 }
 

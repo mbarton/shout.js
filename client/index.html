@@ -11,8 +11,8 @@
 	<script type="text/javascript" src="js/matrix.js"></script>
 	<script type="text/javascript" src="js/ui.js"></script>
 	<script type="text/javascript" src="js/muz.js"></script>
-	<script type="text/javascript" src="js/shout.js"></script>
 	<script type="text/javascript" src="js/dont_github_me_bro.js"></script>
+	<script type="text/javascript" src="js/shout.js"></script>
 	<script type="text/javascript" src="js/pusher.js"></script>
 </head>
 <body>
@@ -28,34 +28,76 @@
         </div>
       </div>
     </div>
-    <div id="sequencer">Loading</div>
-	<div class="row">
-		<div class="span2">
-			<h3>Realtime Room</h3>
-		</div>
-		<div class="span2">
-			<div class="btn-group">
-				<button id="play" class="btn"><img src="img/play.png" /></button>
-				<button id="stop" class="btn"><img src="img/stop.png" /></button>
+    <div id="homepage">
+    	<div class="hero-unit">
+    		<h1>Create a new groove...</h1>
+    		<a class="btn btn-primary" href="#">Get Started</a>
+    		<div style="clear: both; height: 0px">&nbsp;</div>
+    	</div>
+    	<div class="row">
+    		<div class="span6">
+    			<h3>Realtime collaborative drum machine and sampling</h3>
+    			Shout.js lets you construct a groove and collaborate on it in realtime across the web. Changes to the pattern are automatically pushed to all clients.
+    			<br /><br />
+    			Call the phone number displayed and record new samples which you can then add to the pattern.
+    			<br /><br />
+    			Copy the url and share it with your friends to start collaborating...
+    		</div>
+    		<div class="span1">
+    		</div>
+    		<div class="span5">
+    			<h3>Who we are</h3>
+    			This site was built by:
+    			<ul>
+    				<li><a href="https://github.com/ajermakovics">Andrejs</a></li>
+    				<li><a href="http://twitter.com/#!/ciudilo">Kiril</a></li>
+    				<li><a href="https://github.com/mbarton">Michael</a></li>
+    			</ul>
+    			for the <a href="http://londonrealtime.co.uk/">London Realtime Hack Weekend 2012</a> and was built in under 48 hours
+    		</div>
+    	</div>
+    	<div class="row dark-footer">
+    		<div class="span7">
+    			&copy; 2012 Andrejs Jermakovics, Kiril Piskunov, Michael Barton
+    		</div>
+    		<div class="span2">
+    			<a target="new" href="http://www.pusher.com"><img src="img/pusher.png" /></a>
+    		</div>
+    		<div class="span3">
+    			<a target="new" href="http://www.twilio.com/" style="text: decoration: none; display: inline-block; width: 166px; height: 0; overflow: hidden; padding-top: 31px; background: url(http://www.twilio.com/packages/company/img/logos_icon_poweredbysmall.png) no-repeat;">powered by twilio™</a>
+    		</div>
+    	</div>	
+    </div>
+    <div id="sequencer">
+    	Loading
+    </div>
+    <div id="controls">
+		<div class="row">
+			<div class="span2">
+				<h3 id="room_name">Realtime Room</h3>
+			</div>
+			<div class="span2">
+				<div class="btn-group">
+					<button id="play" class="btn"><img src="img/play.png" /></button>
+					<button id="stop" class="btn"><img src="img/stop.png" /></button>
+				</div>
+			</div>
+			<div class="span4">
+				<div class="btn-group">
+					<button class="btn dropdown-toggle" data-toggle="dropdown"></button>
+					</a>
+					<ul class="dropdown-menu">
+					</ul>
+					<button id="add_track" class="btn"><img src="img/add.png" /></button>
+				</div>
+			</div>
+			<div class="span2">
+				<h3>Tempo</h3>
+			</div>
+			<div class="span2 control-group">
+				<input id="tempo" type="text" value="140" />
 			</div>
 		</div>
-		<div class="span4">
-			<div class="btn-group">
-				<button class="btn dropdown-toggle" data-toggle="dropdown"></button>
-				</a>
-				<ul class="dropdown-menu">
-				</ul>
-				<button id="add_track" class="btn"><img src="img/add.png" /></button>
-			</div>
-		</div>
-		<div class="span2">
-			<h3>Tempo</h3>
-		</div>
-		<div class="span2 control-group">
-			<input id="tempo" type="text" value="140" />
-		</div>
-	</div>
-	<div id="audio_player">
 	</div>
 </div>
 </body>

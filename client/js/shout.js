@@ -212,6 +212,43 @@ function loadSamples(callback)
 
 var room = window.location.hash.replace("#", "");
 
+function loadPage(room)
+{
+	if(room === undefined)
+		room = window.location.hash.replace("#", "");
+
+	logInfo("Loading...");
+
+	if(room === "")
+	{
+		$("#homepage").show();
+		$("#sequencer").hide();
+		$("#controls").hide();
+		$("#homepage .hero-unit a").attr("href", "#" + Math.floor(Math.random()*5000));
+		logInfo("Get the code at <a target=\"new\" href=\"https://github.com/mbarton/shout.js\">GitHub</a>");
+	}
+	else
+	{
+		$("#sequencer").show();
+		$("#homepage").hide();
+		$("#controls").show();
+
+		$("#room_name").html("Room " + room);
+
+		loadSamples(function(){
+			renderSampleChooser();
+		});
+
+		loadMatrix(function()
+		{
+			renderFromMatrix();
+			loadAudio();
+		});
+	}
+}
+
+window.onhashchange = loadPage();
+
 $(function(){
 	$("#tempo").change(function(){
 		var bpm = parseInt($(this).val());
@@ -305,14 +342,10 @@ $(function(){
 		dropper.children(".dropdown-toggle").html(sample);
 	});
 
-	loadSamples(function(){
-		renderSampleChooser();
+	$(".hero-unit a").click(function()
+	{
+		loadPage($(this).attr("href"));
 	});
 
-	loadMatrix(function()
-	{
-		renderFromMatrix();
-		loadAudio();
-	});
-	logInfo();
+	loadPage();
 });

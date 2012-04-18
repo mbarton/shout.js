@@ -2,12 +2,18 @@
 {
 	width: 1200px;
 }
+#homepage
+{
+	width: 940px;
+	margin-left: auto;
+	margin-right: auto;
+}
 .track
 {
 	clear: both;
 	margin-bottom: 20px;
 }
-#push_down
+#push_down, #homepage
 {
 	margin-top: 50px;
 }
@@ -48,4 +54,49 @@
 .error_report .label-important
 {
 	display: none;
+}
+#homepage, #controls, #sequencer
+{
+	display: none;
+}
+#homepage h1
+{
+	font-size: 3em;
+	float: left;
+	padding-bottom: 60px;
+}
+#homepage .hero-unit a
+{
+	float: right;
+	font-size: 2.5em;
+	padding: 30px;
+}
+#homepage h3
+{
+	margin-bottom: 10px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid silver;
+}
+.label-success a
+{
+	color: white;
+}
+.dark-footer
+{
+	background-color: gray;
+	margin-top: 30px;
+	height: 38px;
+}
+.dark-footer .span7
+{
+	color: #EEE;
+	font-size: .7em;
+}
+.dark-footer img
+{
+	float: left;
+}
+#homepage .span1
+{
+	background-color: white;
 }
