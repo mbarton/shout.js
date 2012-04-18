@@ -53,19 +53,18 @@
     				<li><a href="http://twitter.com/#!/ciudilo">Kiril</a></li>
     				<li><a href="https://github.com/mbarton">Michael</a></li>
     			</ul>
-    			for the <a href="http://londonrealtime.co.uk/">London Realtime Hack Weekend 2012</a> and was built in under 48 hours
+    			for the <a href="http://londonrealtime.co.uk/">London Realtime Hack Weekend 2012</a> and was built in under 48 hours thanks to the super awesome APIs below
     		</div>
     	</div>
     	<div class="row dark-footer">
     		<div class="span7">
     			&copy; 2012 Andrejs Jermakovics, Kiril Piskunov, Michael Barton
     		</div>
-    		<div class="span2">
+		<div class="span5">
+			<a target="new" href="http://www.gosquared.com/"><img src="img/gosquared.png" /></a>
+			<a target="new" href="http://www.twilio.com"><img src="img/twilio_ball.png" /></a>
     			<a target="new" href="http://www.pusher.com"><img src="img/pusher.png" /></a>
-    		</div>
-    		<div class="span3">
-    			<a target="new" href="http://www.twilio.com/" style="text: decoration: none; display: inline-block; width: 166px; height: 0; overflow: hidden; padding-top: 31px; background: url(http://www.twilio.com/packages/company/img/logos_icon_poweredbysmall.png) no-repeat;">powered by twilio™</a>
-    		</div>
+		</div>
     	</div>	
     </div>
     <div id="sequencer">
@@ -82,7 +81,7 @@
 					<button id="stop" class="btn"><img src="img/stop.png" /></button>
 				</div>
 			</div>
-			<div class="span4">
+			<div class="span3">
 				<div class="btn-group">
 					<button class="btn dropdown-toggle" data-toggle="dropdown"></button>
 					</a>
@@ -91,14 +90,28 @@
 					<button id="add_track" class="btn"><img src="img/add.png" /></button>
 				</div>
 			</div>
-			<div class="span2">
-				<h3>Tempo</h3>
+			<div class="span4">
+				Phone <strong>0800 011 9881</strong> to add a new sample
 			</div>
-			<div class="span2 control-group">
+			<div class="span3 control-group">
+				<h3>Tempo</h3>
 				<input id="tempo" type="text" value="140" />
 			</div>
 		</div>
 	</div>
 </div>
+<!-- Well you gotta get Go Squared in somehow -->
+<script type="text/javascript">
+    var GoSquared={};
+    GoSquared.acct = "GSN-379516-P";
+    (function(w){
+        function gs(){
+            w._gstc_lt=+(new Date); var d=document;
+            var g = d.createElement("script"); g.type = "text/javascript"; g.async = true; g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+            var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(g, s);
+        }
+        w.addEventListener?w.addEventListener("load",gs,false):w.attachEvent("onload",gs);
+    })(window);
+</script>
 </body>
 </html>
