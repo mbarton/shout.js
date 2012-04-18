@@ -13,6 +13,7 @@ pusher.key = ''
 pusher.secret = ''
 
 app.p = pusher.Pusher()
+app.maxSample = 0
 
 samples = {}
 phones = {}
@@ -45,18 +46,7 @@ def handle_key():
  
     digit_pressed = request.args.get('Digits', None)
 
-    if digit_pressed == "2":
-        resp = twilio.twiml.Response()
-        # Dial (310) 555-1212 - connect that number to the incoming caller.
-
-        resp.dial("12345678")
-
-        # If the dial fails:
-        resp.say("The call failed, or the remote party hung up. Goodbye.")
- 
-        return str(resp)
- 
-    elif digit_pressed == "1":
+    if digit_pressed == "1":
         resp = twilio.twiml.Response()
         resp.say("You have 2 seconds to record your shout after the tone.")
         resp.record(maxLength="2", action="/handle-recording")
@@ -76,38 +66,39 @@ def handle_recording():
 
     print "handle-recording. url: " + str( recording_url )
 
-    from_number = phones[call_sid]
-    print "from_number: " + str( from_number )
+    from_number = str( phones[call_sid] )
+    print "from_number: " + from_number
     
-    sample_id = call_sid
-    filename = sample_id + ".mp3"
+    app.maxSample += 1
+    sample_id = app.maxSample
+    filename = "sample_" + sample_id + ".mp3"
     rec_file = "static/" + filename;
     print "rec file: " + rec_file
 
     if recording_url:
         urllib.urlretrieve( recording_url, rec_file ) # download file localy
-        samples[call_sid] = url_for('static', filename=filename)
-        push_to_pusher("twilio", str(from_number), str(sample_id), str(samples[call_sid]) )
+        sample_url = url_for('static', filename=filename)
+        samples[sample_id] = sample_url
+        push_to_pusher("twilio", from_number, str(sample_id), str(sample_url) )
 
     resp = twilio.twiml.Response()
     resp.say("Thanks for shouting.")
     # resp.play(recording_url)
-    resp.say("Check the app for your shout.")
+    resp.say("Your shout is number " + sample_id)
     resp.say("Goodbye.")
 
     return str(resp)
-
 
 def push_to_pusher(room, phone_nr, sample_id, sample_url):
     print "Pushing to room: " + room + ", url: " + sample_url
     app.p[room].trigger( 'twilio_event', { 'id': sample_id, 'url': sample_url, 'phone': phone_nr } )
 
-@app.route("/repush", methods=["GET", "POST"])
+@app.route("/repush")
 def repush():
     lastkey = samples.keys().pop(0)
     push_to_pusher("twilio", "None", str(lastkey), str(samples[lastkey]) )
 
-@app.route("/list", methods=["GET", "POST"])
+@app.route("/list")
 def handle_list():
     ret = "{ samples: [\n"
     for f in listdir("static"):
@@ -133,14 +124,19 @@ def handle_show():
         phone = str(phones[k])
         ret += "{ id: '" + str(k) + "', phone: '" + phone + "', url: '" + str( samples[k] ) + "' }, "
     ret += "]  }"
-
     return str(ret)
 
 def read_samples():
     for f in listdir("static"):
         fname = splitext(f)[0]
-        samples[fname] = 'static/' + f
-        phones[fname] = ""
+        fparts = fname.split("_")
+        
+        if len(fparts)>1:
+            sample_id = fparts[1]
+            samples[sample_id] = 'static/' + f
+
+            if sample_id > app.maxSample:
+                app.maxSample = sample_id
 
 if __name__ == "__main__":
     read_samples()
