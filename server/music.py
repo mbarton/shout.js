@@ -1,4 +1,5 @@
 import flask
+import copy
 from functools import wraps
 from flask import redirect, request, current_app
 import pusher
@@ -33,8 +34,8 @@ rooms = AutoVivification()
 @app.route('/get/<room>/', methods=['GET'])
 def getstate(room):
     if room not in rooms:
-      rooms[room] = positions 
-    print json.dumps(rooms)
+      rooms[room] = copy.deepcopy(positions)
+      print 'New room has been created ' + room 
     callback = request.args.get('callback', False)
     if callback:
       content = str(callback) + '(' + json.dumps(rooms[room]) + ')'
@@ -45,12 +46,16 @@ def getstate(room):
 @app.route('/change/<room>/<sample>/<position>/<enabled>')
 def update_room_state(room, sample, position, enabled):
     sample_i = get_sample_index(room, sample)
-    print 'Updating sample' + str(sample_i)
-    rooms[room][sample_i]['triggers'][int(position)] = bool(enabled)
+    print 'Updating sample' + str(sample_i) + ' at position ' + str(position) 
+    
+    if enabled == 'true':
+      rooms[room][sample_i]['triggers'][int(position)] = True
+    if enabled == 'false':
+      rooms[room][sample_i]['triggers'][int(position)] = False
      
     app.p[room].trigger('change', {'sample': sample, 'position': position, 'enabled': enabled})
     #rooms[room] = {'sample': sample, 'positions': positions}
-    print rooms
+    print 'Rooms after update ' + str(rooms)
     return ''
 
 @app.route('/addsample/<room>/<name>', methods=['POST'])
@@ -58,8 +63,7 @@ def add_sample(room, name):
   print len(rooms[room]) #{'sample': name, 'path': path}
   file_path = request.form.get('filepath', False)
   if get_sample_index(room, name) == -1:
-    new_triggers = []
-    new_triggers += inital_sample_state
+    new_triggers = copy.deepcopy(inital_sample_state)
     new_sample_json = {'sample': name, 'path': file_path, 'triggers': new_triggers}
     rooms[room].append(new_sample_json)
     app.p[room].trigger('newsample', new_sample_json)
