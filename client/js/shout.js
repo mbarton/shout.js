@@ -159,7 +159,7 @@ function pushPusherTempo(tempo)
 	$.get(url);
 }
 
-function loadMatrix(callback)
+function loadMatrix(room, callback)
 {
 	var url = image_endpoint() + "/" + room + "/?callback=?";
 	
@@ -214,7 +214,9 @@ var room = window.location.hash.replace("#", "");
 
 function loadPage(room)
 {
-	if(room === undefined)
+	if(room !== undefined)
+		room = room.replace("#", "");
+	else
 		room = window.location.hash.replace("#", "");
 
 	logInfo("Loading...");
@@ -239,7 +241,7 @@ function loadPage(room)
 			renderSampleChooser();
 		});
 
-		loadMatrix(function()
+		loadMatrix(room, function()
 		{
 			renderFromMatrix();
 			loadAudio();

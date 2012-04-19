@@ -17,7 +17,7 @@
 {
 	margin-top: 50px;
 }
-.span1
+#sequencer .span1
 {
 	background-color: gray;
 	padding-top: 20px;
@@ -25,7 +25,7 @@
 	text-align: center;
 	border-radius: 5px;
 }
-.span1.label
+#sequencer .span1.label
 {
 	color: white;
 }
@@ -43,9 +43,9 @@
 {
 	background-color: rgb(255, 231, 4) !important;
 }
-.trigger.enabled
+#sequencer .trigger.enabled
 {
-	background-color: rgb(67, 176, 48);
+	background-color: rgb(67, 176, 48); 
 }
 .error_report
 {
@@ -92,11 +92,17 @@
 	color: #EEE;
 	font-size: .7em;
 }
-.dark-footer img
+.dark-footer a
+{
+	float: right;
+	margin-left: 10px;
+}
+#controls .span3 h3
 {
 	float: left;
+	margin-right: 10px;
 }
-#homepage .span1
+#tempo
 {
-	background-color: white;
+	width: 100px;
 }
