@@ -131,6 +131,9 @@ def read_samples():
             if sample_id > app.maxSample:
                 app.maxSample = sample_id
 
+def create_app():
+    return app
+
 if __name__ == "__main__":
     read_samples()
     app.debug = True
