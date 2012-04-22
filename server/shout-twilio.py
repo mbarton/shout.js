@@ -71,7 +71,7 @@ def handle_recording():
 
     if recording_url:
         urllib.urlretrieve( recording_url, rec_file ) # download file localy
-        sample_url = url_for('static', filename=filename)
+        sample_url = '/static/' + filename
         samples[sample_id] = sample_url
         push_to_pusher("twilio", str(sample_id), str(sample_url) )
 
@@ -96,7 +96,7 @@ def repush():
 def handle_list():
     ret = "{ samples: [\n"
     for f in listdir("static"):
-        ret = ret + url_for('static', filename=str(f)) + ", "
+        ret = ret + '/static' + str(f) + " , "
     ret += "}"
     return str(ret)
 
