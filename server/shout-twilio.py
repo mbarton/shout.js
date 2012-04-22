@@ -132,6 +132,7 @@ def read_samples():
                 app.maxSample = sample_id
 
 def create_app():
+    read_samples()
     return app
 
 if __name__ == "__main__":
