@@ -7,7 +7,4 @@
     "args": ["-p", "."],
     "showOutput": "silent",
     "problemMatcher": "$tsc",
-    "options": {
-        "cwd": "${workspaceRoot}/serverless"
-    }
 }

@@ -1,20 +1,36 @@
 /// <reference path="typings/index.d.ts" />
 
-const NoteView = ({ note, toggleNote } : { note: boolean, toggleNote: () => void} ) => {
-    return <div className="one wide column">
-        <button className={note ? "ui button active" : "ui button"} onClick={toggleNote} />
-    </div>;
-};
+interface NoteViewProps { note: boolean, active: boolean, toggleNote: () => void }
 
-const TrackView = ({ track, toggleNote } : { track: Track, toggleNote: (noteIx: number) => void }) => {
+class NoteView extends React.Component<NoteViewProps, {}> {
+    shouldComponentUpdate = (nextProps: NoteViewProps, nextState: {}) => {
+        return nextProps.note != this.props.note || nextProps.active != this.props.active;
+    }
+
+    render() {
+        let buttonClass = "ui button";
+
+        if(this.props.active) {
+            buttonClass = "ui positive button";
+        } else if(this.props.note) {
+            buttonClass = "ui button active";
+        }
+
+        return <div className="one wide column">
+            <button className={buttonClass} onClick={this.props.toggleNote} />
+        </div>;
+    }
+}
+
+const TrackView = ({ track, step, toggleNote } : { track: Track, step: number, toggleNote: (noteIx: number) => void }) => {
     const notes = track.notes.map((note, ix) => {
         const toggleFn = () => toggleNote(ix);
-        return <NoteView key={ix} note={note} toggleNote={toggleFn} />
+        return <NoteView key={ix} note={note} active={ix == step} toggleNote={toggleFn} />
     });
 
     return <div className="ui grid container">
         <div className="one wide column">
-            <strong>{track.sample}</strong>
+            <strong>{track.sampleName}</strong>
         </div>
         <div className="fifteen wide column">
             <div className="ui grid">
@@ -24,13 +40,16 @@ const TrackView = ({ track, toggleNote } : { track: Track, toggleNote: (noteIx: 
     </div>;
 }
 
-const TransportView = (props: { state: string }) => {
+const TransportView = ({ playing, togglePlaying } : { playing: boolean, togglePlaying: () => void }) => {
+    const iconImage = playing ? "stop circle" : "video play";
+    const iconClass = `large ${iconImage} icon`;
+
     return <div className="ui menu">
         <div className="header item">
             shout
         </div>
         <div className="right menu">
-            <a className="item"><i className="large video play icon"></i></a>
+            <a className="item" onClick={togglePlaying}><i className={iconClass}></i></a>
         </div>
     </div>
 }

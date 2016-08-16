@@ -2,6 +2,8 @@
   "globalDependencies": {
     "react": "registry:dt/react#0.14.0+20160805125551",
     "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
-    "react-global": "registry:dt/react-global#0.14.0+20160316155526"
+    "react-global": "registry:dt/react-global#0.14.0+20160316155526",
+    "webaudioapi/waa": "registry:dt/webaudioapi/waa#0.0.0+20160328224055",
+    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160728142841"
   }
 }

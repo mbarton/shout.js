@@ -6,6 +6,7 @@
     },
     "files": [
         "model.ts",
+        "audio.ts",
         "ui.tsx",
         "shout.tsx"
     ]
