@@ -1,14 +1,15 @@
 /// <reference path="typings/index.d.ts" />
 
-const NoteView = ({ note } : { note: boolean} ) => {
+const NoteView = ({ note, toggleNote } : { note: boolean, toggleNote: () => void} ) => {
     return <div className="one wide column">
-        <button className={note ? "ui button active" : "ui button"} />
+        <button className={note ? "ui button active" : "ui button"} onClick={toggleNote} />
     </div>;
 };
 
-const TrackView = ({ track } : { track: Track }) => {
+const TrackView = ({ track, toggleNote } : { track: Track, toggleNote: (noteIx: number) => void }) => {
     const notes = track.notes.map((note, ix) => {
-        return <NoteView key={ix} note={note} />;
+        const toggleFn = () => toggleNote(ix);
+        return <NoteView key={ix} note={note} toggleNote={toggleFn} />
     });
 
     return <div className="ui grid container">

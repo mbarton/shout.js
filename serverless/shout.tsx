@@ -4,9 +4,15 @@ class Shout extends React.Component<{}, AppState> {
         this.state = DEFAULT_STATE;
     }
 
+    toggleNote(track: number, note: number) {
+        const newState = ModelHelpers.toggleNote(track, note, this.state);
+        this.setState(newState);
+    }
+
     render() {
         const tracks = this.state.tracks.map((track, ix) => {
-            return <TrackView key={ix} track={track} /> 
+            const toggleFn = (noteIx: number) => this.toggleNote(ix, noteIx);
+            return <TrackView key={ix} track={track} toggleNote={toggleFn} /> 
         });
 
         return <div>
