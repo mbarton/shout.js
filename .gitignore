@@ -1,2 +1,3 @@
 .DS_Store
 client/js/dont_github_me_bro.js
+serverless/target
