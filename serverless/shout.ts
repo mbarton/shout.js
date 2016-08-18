@@ -25,7 +25,7 @@ class Shout {
     }
 
     mountViews = () => {
-        const base = document.querySelector("body");
+        const base = document.querySelector(".container");
         base.appendChild(this.transport.element);
 
         this.tracks.forEach((track) => {
@@ -35,6 +35,7 @@ class Shout {
 
     togglePlayback = () => {
         this.state.playing = !this.state.playing;
+        this.transport.playing = this.state.playing;
 
         this.tracks.forEach((track) => {
             track.notes.forEach((note) => {

@@ -10,7 +10,7 @@ namespace UI {
             this._on = on;
             this._active = active;
 
-            this.element.className = "one wide column";
+            this.element.className = "column note";
             this.button.className = this.renderClass();
 
             this.element.appendChild(this.button);
@@ -22,12 +22,12 @@ namespace UI {
         }
 
         private renderClass = () => {
-            if(this._active) {
-                return "ui positive button";
+            if(this._active && this._on) {
+                return "button";
             } else if(this._on) {
-                return "ui button active";
+                return "button note-on";
             } else {
-                return "ui button";
+                return "button note-off";
             }
         }
     }

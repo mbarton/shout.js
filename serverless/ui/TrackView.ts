@@ -4,14 +4,14 @@ namespace UI {
         element: HTMLDivElement = document.createElement("div");
 
         constructor(track: Track) {
-            this.element.className = "ui grid container";
+            this.element.className = "row";
             this.buildName(track.name);
             this.buildNotes(track.notes);
         }
 
         private buildName = (name: string) => {
             const nameElem = document.createElement("div");
-            nameElem.className = "one wide column";
+            nameElem.className = "column column-10";
             nameElem.innerHTML = `<strong>${name}</strong>`;
 
             this.element.appendChild(nameElem);
@@ -19,10 +19,10 @@ namespace UI {
 
         private buildNotes = (notes: Array<boolean>) => {
             const notesElem = document.createElement("div");
-            notesElem.className = "fifteen wide column";
+            notesElem.className = "column column-90";
 
             const notesParent = document.createElement("div");
-            notesParent.className = "ui grid";
+            notesParent.className = "row";
             notesElem.appendChild(notesParent);
 
             notes.forEach((note) => {

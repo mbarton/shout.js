@@ -1,0 +1,22 @@
+.button.note-on {
+  background-color: #C0C1C2;
+  border-color: #C0C1C2;
+}
+
+.button.note-off {
+  background-color: #E0E1E2;
+  border-color: #E0E1E2;
+}
+
+.row .column.note {
+    flex: 0 0 5%;
+    max-width: 5%;
+}
+
+.row .column.note button {
+    padding: 0 1.5rem;
+}
+
+.button.play i {
+    font-size: 2.5rem;
+}
