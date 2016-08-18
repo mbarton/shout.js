@@ -2,8 +2,10 @@ namespace UI {
     export class TrackView implements View {
         notes: Array<NoteView> = [];
         element: HTMLDivElement = document.createElement("div");
+        toggleNote: (number) => void;
 
-        constructor(track: Track) {
+        constructor(track: Track, toggleNote: (number) => void) {
+            this.toggleNote = toggleNote;
             this.element.className = "row";
             this.buildName(track.name);
             this.buildNotes(track.notes);
@@ -25,8 +27,9 @@ namespace UI {
             notesParent.className = "row";
             notesElem.appendChild(notesParent);
 
-            notes.forEach((note) => {
-                const view = new NoteView(note, false);
+            notes.forEach((note, ix) => {
+                const updateFn = () => this.toggleNote(ix);
+                const view = new NoteView(note, false, updateFn);
                 
                 this.notes.push(view);
                 notesParent.appendChild(view.element);

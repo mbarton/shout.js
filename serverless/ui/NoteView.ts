@@ -6,14 +6,20 @@ namespace UI {
         element: HTMLDivElement = document.createElement("div");
         private button: HTMLButtonElement = document.createElement("button");
 
-        constructor(on: boolean, active: boolean) {
+        constructor(on: boolean, active: boolean, updateFn: () => void) {
             this._on = on;
             this._active = active;
 
             this.element.className = "column note";
             this.button.className = this.renderClass();
 
+            this.button.onclick = updateFn;
             this.element.appendChild(this.button);
+        }
+
+        set on(on: boolean) {
+            this._on = on;
+            this.button.className = this.renderClass();
         }
 
         set active(active: boolean) {

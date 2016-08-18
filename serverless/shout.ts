@@ -10,7 +10,10 @@ class Shout {
         this.millisPerStep = audio.millisPerStep(this.state.bpm);
 
         this.transport = new UI.TransportView(this.togglePlayback);
-        this.tracks = this.state.tracks.map((track) => new UI.TrackView(track));
+        this.tracks = this.state.tracks.map((track, ixTrack) => {
+            const updateFn = (ixNote: number) => this.toggleNote(ixTrack, ixNote);
+            return new UI.TrackView(track, updateFn);
+        });
 
         this.loadTracks();
         this.mountViews();
@@ -31,6 +34,14 @@ class Shout {
         this.tracks.forEach((track) => {
             base.appendChild(track.element);
         });
+    }
+
+    toggleNote = (ixTrack: number, ixNote: number) => {
+        const track = this.state.tracks[ixTrack];
+        const trackView = this.tracks[ixTrack];
+
+        track.notes[ixNote] = !track.notes[ixNote];
+        trackView.notes[ixNote].on = track.notes[ixNote];
     }
 
     togglePlayback = () => {
