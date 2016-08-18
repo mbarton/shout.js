@@ -7,7 +7,7 @@ class Shout {
 
     constructor() {
         this.state = DEFAULT_STATE;
-        this.millisPerStep = audio.millisPerStep(this.state.bpm);
+        this.millisPerStep = AudioEngine.millisPerStep(this.state.bpm);
 
         this.transport = new UI.TransportView(this.togglePlayback);
         this.tracks = this.state.tracks.map((track, ixTrack) => {
@@ -21,7 +21,7 @@ class Shout {
 
     loadTracks = () => {
         this.state.tracks.forEach(( { name }, track) => {
-            audio.loadSample(name).then((sample) => {
+            AudioEngine.loadSample(name).then((sample) => {
                 this.state.tracks[track].sample = sample;
             });
         });
@@ -77,7 +77,7 @@ class Shout {
                 trackView.notes[stepNow].active = true;
 
                 if(track.notes[stepNow]) {
-                    audio.playSample(track.sample);
+                    AudioEngine.playSample(track.sample);
                 }
             }
 
