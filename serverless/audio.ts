@@ -19,4 +19,12 @@ namespace audio {
             });
         });
     }
+
+    export function playSample(sample: AudioBuffer) {
+        const source = context.createBufferSource();
+        source.buffer = sample;
+        source.connect(context.destination);
+
+        source.start();
+    }
 }
