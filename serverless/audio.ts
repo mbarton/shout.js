@@ -1,3 +1,5 @@
+/// <reference path="typings/index.d.ts" />
+
 namespace audio {
     const context = new AudioContext();
     const rootSamplePath = "samples";

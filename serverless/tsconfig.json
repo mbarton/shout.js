@@ -1,13 +1,6 @@
 {
     "compilerOptions": {
         "target": "es6",
-        "outFile": "target/build.js",
-        "jsx": "react"
-    },
-    "files": [
-        "model.ts",
-        "audio.ts",
-        "ui.tsx",
-        "shout.tsx"
-    ]
+        "outFile": "target/build.js"
+    }
 }
