@@ -9,7 +9,7 @@ class Shout {
         this.state = DEFAULT_STATE;
         this.millisPerStep = AudioEngine.millisPerStep(this.state.bpm);
 
-        this.transport = new UI.TransportView(this.togglePlayback);
+        this.transport = new UI.TransportView(this.togglePlayback, this.startShare);
         this.tracks = this.state.tracks.map((track, ixTrack) => {
             const updateFn = (ixNote: number) => this.toggleNote(ixTrack, ixNote);
             return new UI.TrackView(track, updateFn);
@@ -84,5 +84,10 @@ class Shout {
             this.state.step = stepNow;
             setTimeout(this.step, this.millisPerStep);
         }
+    }
+
+    startShare = () => {
+        const client = new Network.Client();
+        client.createOffer().then((sdp) => console.log(sdp));
     }
 }
