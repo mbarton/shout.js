@@ -1,23 +1,34 @@
+interface Note {
+    enabled: boolean;
+    active: boolean;
+}
+
 interface Track {
-    name: string,
-    sample?: AudioBuffer,
-    notes: Array<boolean>
+    name: string;
+    notes: Array<Note>;
+}
+
+interface PlaybackState {
+    playing: boolean;
+    step: number;
 }
 
 interface AppState {
+    bpm: number,
     tracks: Array<Track>,
-    step: number,
-    playing: boolean,
-    bpm: number
+    playback: PlaybackState
 }
 
 const DEFAULT_STATE: AppState = {
-    playing: false,
-    step: -1,
     bpm: 120,
+    playback: { playing: false, step: -1 },
     tracks: [ 
-        { name: "kick", notes: [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false] },
-        { name: "hat", notes: [false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false] },
-        { name: "snare", notes: [false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false] }
+        createTrack("kick", [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false]),
+        createTrack("hat", [false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false]),
+        createTrack("snare", [false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false])
     ]
+}
+
+function createTrack(name: string, notes: Array<boolean>): Track {
+    return { name: name, notes: notes.map((enabled) => { return { enabled: enabled, active: false }}) };
 }

@@ -9,9 +9,11 @@
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
-        <div class="container"></div>
+        <div id="root"></div>
     </body>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.0/react.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.0/react-dom.js"></script>
     <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script type="text/javascript" src="target/build.js"></script>
-    <script type="text/javascript">const instance = new Shout();</script>
+    <script type="text/javascript">const instance = new Shout("root");</script>
 </html>

@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "target": "es5",
+        "jsx": "react",
         "outFile": "target/build.js"
     }
 }
