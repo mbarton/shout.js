@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>shout</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.0/css/foundation.min.css">
+</head>
+<body>
+    <div id="main"></div>
+    <script type="text/javascript" src="target/shout.js"></script>
+    <script type="text/javascript">
+        const node = document.getElementById('main');
+        const app = Elm.Main.embed(node);
+    </script>
+</body>
+</html>

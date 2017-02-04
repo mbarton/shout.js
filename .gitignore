@@ -1,2 +1,4 @@
 .DS_Store
 client/js/dont_github_me_bro.js
+serverless/elm-stuff
+serverless/target
