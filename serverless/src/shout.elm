@@ -109,7 +109,7 @@ subscriptions model =
 -- -- VIEW
 
 renderNote: String -> Int -> Int -> Bool -> Html Msg
-renderNote sample note step enabled =
+renderNote sample step note enabled =
   div [class "small-3 columns"] [
       button [
         type_ "button",
