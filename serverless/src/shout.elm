@@ -15,25 +15,35 @@ type alias Track = {
   notes: Notes
 }
 
-type alias Model = Dict String Track
+type alias Tracks = Dict String Track
+
+type alias Model = {
+  tracks: Tracks,
+  playing: Bool
+}
 
 notes: List Int -> Notes
 notes enabled =
   List.map (\i -> List.any (\j -> i == j) enabled) (List.range 0 15)
 
 model: Model
-model = Dict.fromList
-  [
-    ("kick", { position = 0, notes = notes [0, 4, 8, 12] }),
-    ("hihat", { position = 1, notes = notes [2, 6, 10, 14] }),
-    ("snare", { position = 2, notes = notes [4, 12] })
-  ]
+model =
+  {
+    playing = False,
+    tracks = Dict.fromList
+      [
+        ("kick", { position = 0, notes = notes [0, 4, 8, 12] }),
+        ("hihat", { position = 1, notes = notes [2, 6, 10, 14] }),
+        ("snare", { position = 2, notes = notes [4, 12] })
+      ]
+  }
 
 
 -- UPDATE
 
 type Msg =
-  ToggleNote String Int
+  ToggleNote String Int |
+  TogglePlayback
 
 updateNote: Int -> Track -> Track
 updateNote indexToUpdate track =
@@ -46,7 +56,13 @@ update : Msg -> Model -> Model
 update msg model =
   case msg of
     ToggleNote track note ->
-      Dict.update track (Maybe.map (updateNote note)) model
+      let
+        tracks = Dict.update track (Maybe.map (updateNote note)) model.tracks
+      in
+        { model | tracks = tracks }
+    
+    TogglePlayback ->
+      { model | playing = not model.playing }
 
 
 -- -- VIEW
@@ -98,11 +114,29 @@ topBar =
     ]
   ]
 
+bottomBar: Bool -> Html Msg
+bottomBar playing =
+  div [class "row"] [
+    div [class "small-1 small-offset-10 columns"] [
+      div [class "row"] [
+        button [type_ "button", class "success button", disabled playing, onClick TogglePlayback] [
+          i [class "fi-play"] []
+        ],
+        button [type_ "button", class "alert button", disabled (not playing), onClick TogglePlayback] [
+          i [class "fi-stop"] []
+        ]
+      ]
+    ]
+  ]
+
 view : Model -> Html Msg
 view model =
   let
-    tracks = Dict.toList model
+    tracks = Dict.toList model.tracks
     ordered = List.sortBy (\track -> (Tuple.second track).position) tracks
     rendered = List.map renderTrack ordered
+
+    top = [topBar, (br [] [])]
+    bottom = [(br [] []), (bottomBar model.playing)]
   in
-    div [] (topBar :: (br [] []) :: rendered)
+    div [] (top ++ rendered ++ bottom)
