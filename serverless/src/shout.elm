@@ -5,58 +5,22 @@ import Dict exposing (Dict)
 import Time exposing (Time, minute)
 import Debug exposing (log)
 
+import Storage exposing (save, init)
+import Data exposing (..)
+
 main =
-  Html.program {
+  Html.programWithFlags {
     init = init,
     view = view,
     update = update,
     subscriptions = subscriptions
   }
 
--- MODEL
-
-type alias Notes = List Bool
-
-type alias Track = {
-  position: Int,
-  notes: Notes
-}
-
-type alias Tracks = Dict String Track
-
-type alias Model = {
-  tracks: Tracks,
-  bpm: Int,
-  playing: Bool,
-  step: Int
-}
-
-notes: List Int -> Notes
-notes enabled =
-  List.map (\i -> List.any (\j -> i == j) enabled) (List.range 0 15)
-
-model: Model
-model =
-  {
-    playing = False,
-    step = -1,
-    bpm = 120,
-    tracks = Dict.fromList
-      [
-        ("kick", { position = 0, notes = notes [0, 4, 8, 12] }),
-        ("hihat", { position = 1, notes = notes [2, 6, 10, 14] }),
-        ("snare", { position = 2, notes = notes [4, 12] })
-      ]
-  }
-
-init: (Model, Cmd Msg)
-init =
-  (model, Cmd.none)
-
 
 -- UPDATE
 
 type Msg =
+  Reset |
   ToggleNote String Int |
   TogglePlayback |
   Step Time
@@ -71,11 +35,15 @@ updateNote indexToUpdate track =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    Reset ->
+      (default, save default)
+
     ToggleNote track note ->
       let
         tracks = Dict.update track (Maybe.map (updateNote note)) model.tracks
+        updated = { model | tracks = tracks }
       in
-        ({ model | tracks = tracks }, Cmd.none)
+        (updated, save updated)
     
     TogglePlayback ->
       let
@@ -146,8 +114,8 @@ renderTrack step params =
       div [class "small-11 columns"] (renderNoteBoxes renderedNotes)
     ]
 
-topBar: Int -> Html Msg
-topBar bpm =
+topBar: Int -> Bool -> Html Msg
+topBar bpm playing =
   div [class "top-bar"] [
     div [class "top-bar-left"] [
       ul [class "menu"] [
@@ -158,6 +126,11 @@ topBar bpm =
       ul [class "menu"] [
         li [] [
           input [type_ "text", disabled True, value (toString bpm)] []
+        ],
+        li [] [
+          button [type_ "button", class "secondary button", disabled playing, onClick Reset] [
+            i [class "fi-skull"] []
+          ]
         ]
       ]
     ]
@@ -185,7 +158,7 @@ view model =
     ordered = List.sortBy (\track -> (Tuple.second track).position) tracks
     rendered = List.map (renderTrack model.step) ordered
 
-    top = [(topBar model.bpm), (br [] [])]
+    top = [(topBar model.bpm model.playing), (br [] [])]
     bottom = [(br [] []), (bottomBar model.playing)]
   in
     div [] (top ++ rendered ++ bottom)

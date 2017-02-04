@@ -15,10 +15,17 @@
 </head>
 <body>
     <div id="main"></div>
+    <!-- TODO MRB: is there a way of getting elm to smush my JS into the build? -->
     <script type="text/javascript" src="target/shout.js"></script>
     <script type="text/javascript">
         const node = document.getElementById('main');
-        const app = Elm.Main.embed(node);
+        const startData = localStorage.data ? JSON.parse(localStorage.data) : null;
+
+        const app = Elm.Main.embed(node, startData);
+
+        app.ports.saveJs.subscribe((data) => {
+            localStorage.data = JSON.stringify(data);
+        });
     </script>
 </body>
 </html>
