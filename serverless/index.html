@@ -16,6 +16,7 @@
 <body>
     <div id="main"></div>
     <!-- TODO MRB: is there a way of getting elm to smush my JS into the build? -->
+    <script type="text/javascript" src="src/audio.js"></script>
     <script type="text/javascript" src="target/shout.js"></script>
     <script type="text/javascript">
         const node = document.getElementById('main');
@@ -25,6 +26,12 @@
 
         app.ports.saveJs.subscribe((data) => {
             localStorage.data = data;
+        });
+
+        app.ports.downloadSamplesJs.subscribe((samples) => {
+            samples.forEach((sample) => {
+                ShoutAudio.downloadSample(sample, app.ports.downloadedSamples.send);
+            });
         });
     </script>
 </body>
