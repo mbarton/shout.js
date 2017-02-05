@@ -1,13 +1,22 @@
 const ShoutAudio = (function() {
+    const samplePath = "samples";
     const ctx = new AudioContext();
 
-    function downloadSample(sample) {
-        const request = new Request(sample);
+    const samples = new Map();
 
-        fetch(request).then((response) => {
-            return reponse.arrayBuffer();
-        }).then((buffer) => {
-            //   
-        });
+    return {
+        downloadSample: (sample, callback) => {
+            const path = `${samplePath}/${sample}.mp3`;
+            const request = new Request(path);
+
+            fetch(request).then((response) => {
+                return response.arrayBuffer();
+            }).then((buffer) => {
+                ctx.decodeAudioData(buffer, (data) => {
+                    samples.set(sample, buffer);
+                    callback(sample);
+                });
+            });
+        }
     }
 }());

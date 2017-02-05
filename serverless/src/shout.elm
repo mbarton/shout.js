@@ -5,12 +5,12 @@ import Dict exposing (Dict)
 import Time exposing (Time, minute)
 import Debug exposing (log)
 
-import Storage exposing (save, init)
+import Interop
 import Data exposing (..)
 
 main =
   Html.programWithFlags {
-    init = init,
+    init = Interop.init,
     view = view,
     update = update,
     subscriptions = subscriptions
@@ -23,7 +23,8 @@ type Msg =
   Reset |
   ToggleNote String Int |
   TogglePlayback |
-  Step Time
+  Step Time |
+  DownloadedSample String
 
 updateNote: Int -> Track -> Track
 updateNote indexToUpdate track =
@@ -32,18 +33,22 @@ updateNote indexToUpdate track =
   in
     { track | notes = notes }
 
+updateTrack: (Track -> Track) -> String -> Tracks -> Tracks
+updateTrack updateFn track tracks =
+  Dict.update track (Maybe.map updateFn) tracks
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Reset ->
-      (default, save default)
+      (default, Interop.save default)
 
     ToggleNote track note ->
       let
-        tracks = Dict.update track (Maybe.map (updateNote note)) model.tracks
+        tracks = updateTrack (updateNote note) track model.tracks
         updated = { model | tracks = tracks }
       in
-        (updated, save updated)
+        (updated, Interop.save updated)
     
     TogglePlayback ->
       let
@@ -60,6 +65,13 @@ update msg model =
         -- log(toString nextStep)
         ({ model | step = nextStep}, Cmd.none)
 
+    DownloadedSample sample ->
+      let
+        track = updateTrack (\track -> { track | loading = False}) sample model.tracks
+        updated = { model | tracks = track }
+      in
+        (updated, Cmd.none)
+
 
 -- SUBSCRIPTIONS
 
@@ -67,11 +79,10 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   let
     rate = (1 / (120 * 4)) * minute
+    ticker = if model.playing then Time.every rate Step else Sub.none
+    downloaded = Interop.downloadedSamples(DownloadedSample)
   in
-    if model.playing then
-      Time.every rate Step
-    else
-      Sub.none
+    Sub.batch [ticker, downloaded]
 
 
 -- -- VIEW

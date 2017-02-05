@@ -31,5 +31,8 @@ default =
     bpm = 120,
     tracks = Dict.fromList
       [
+        ("kick", { position = 0, loading = True, notes = notes [0, 4, 8, 12] }),
+        ("hihat", { position = 1, loading = True, notes = notes [2, 6, 10, 14] }),
+        ("snare", { position = 2, loading = True, notes = notes [4, 12] })
       ]
   }

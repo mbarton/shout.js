@@ -16,6 +16,7 @@ import Data exposing (Track, Model, Tracks, default)
 trackDecoder: Decoder (String, Track)
 trackDecoder =
   let
+    adapter = (\name position notes -> (name, { position = position, loading = True, notes = notes}))
   in
     map3 adapter (field "name" string) (field "position" int) (field "notes" (list bool))
 
