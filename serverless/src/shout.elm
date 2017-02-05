@@ -60,13 +60,11 @@ update msg model =
         runtime = model.runtime
         playing = not runtime.playing
 
-        command = if (playing) then Interop.play else Interop.stop
-
         updated = updateRuntime model (\runtime ->
           { runtime | playing = playing, step = -1 }
         )
       in
-        (updated, (command model))
+        (updated, (Interop.setPlayback playing))
     
     Step _ ->
       let

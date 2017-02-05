@@ -1,4 +1,4 @@
-port module Interop exposing (save, init, downloadedSamples, play, stop, step)
+port module Interop exposing (save, init, downloadedSamples, setPlayback, step)
 
 import Data exposing (Model, Track, default)
 import Dict exposing (Dict)
@@ -30,16 +30,14 @@ downloadSamples model =
     samples = Dict.keys model.tracks
     runtime = model.runtime
     updated = { runtime | loading = Set.fromList samples }
+
+    command = Cmd.batch [downloadSamplesJs samples, save model]
   in
-    ({ model | runtime = updated}, downloadSamplesJs samples)
+    ({ model | runtime = updated}, command)
 
-play: Model -> Cmd msg
-play model =
-  playJs (serialise model)
-
-stop: Model -> Cmd msg
-stop model =
-  stopJs (serialise model)
+setPlayback: Bool -> Cmd msg
+setPlayback playing =
+  playbackJs playing
 
 ---------------------------------------------
 
@@ -53,8 +51,6 @@ port downloadedSamples: (String -> msg) -> Sub msg
 
 --
 
-port playJs: String -> Cmd msg
-
-port stopJs: String -> Cmd msg
+port playbackJs: Bool -> Cmd msg
 
 port step: (Int -> msg) -> Sub msg
