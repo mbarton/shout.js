@@ -1,0 +1,6 @@
+- download and decode samples
+
+- add audio engine
+    - schedule first set of audio nodes before signalling UI to start playback
+    - hook up UI step updates to audio timer pingbacks?
+        - is there a noticable delay between audio timer pingback and render?

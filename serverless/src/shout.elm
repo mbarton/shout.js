@@ -101,15 +101,28 @@ renderNoteBoxes notes =
   in
     List.map (\part -> div [class "small-3 columns"] part) parts
 
+renderLoading: Bool -> Html Msg
+renderLoading loading =
+  if loading then
+    span [class "alert label"] [small [] [
+      text "Loading"
+    ]]
+  else
+    span [] []
+
 renderTrack: Int -> (String, Track) -> Html Msg
-renderTrack step params =
+renderTrack step (name, track) =
   let
-    (name, track) = params
     renderedNotes = List.indexedMap (renderNote name step) track.notes
   in
     div [class "row"] [
       div [class "small-1 columns"] [
-        strong [] [text name]
+        div [class "row"] [
+          div [class "small-6 columns"] [
+            strong [] [text name]
+          ],
+          div [class "small-6 columns"] [renderLoading track.loading]
+        ]
       ],
       div [class "small-11 columns"] (renderNoteBoxes renderedNotes)
     ]

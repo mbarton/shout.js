@@ -19,12 +19,12 @@
     <script type="text/javascript" src="target/shout.js"></script>
     <script type="text/javascript">
         const node = document.getElementById('main');
-        const startData = localStorage.data ? JSON.parse(localStorage.data) : null;
+        const startData = localStorage.data ? localStorage.data : null;
 
         const app = Elm.Main.embed(node, startData);
 
         app.ports.saveJs.subscribe((data) => {
-            localStorage.data = JSON.stringify(data);
+            localStorage.data = data;
         });
     </script>
 </body>

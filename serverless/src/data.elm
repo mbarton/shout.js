@@ -6,6 +6,7 @@ type alias Notes = List Bool
 
 type alias Track = {
   position: Int,
+  loading: Bool,
   notes: Notes
 }
 
@@ -30,8 +31,5 @@ default =
     bpm = 120,
     tracks = Dict.fromList
       [
-        ("kick", { position = 0, notes = notes [0, 4, 8, 12] }),
-        ("hihat", { position = 1, notes = notes [2, 6, 10, 14] }),
-        ("snare", { position = 2, notes = notes [4, 12] })
       ]
   }
