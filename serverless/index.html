@@ -33,6 +33,14 @@
                 ShoutAudio.downloadSample(sample, app.ports.downloadedSamples.send);
             });
         });
+
+        app.ports.playJs.subscribe((json) => {
+            ShoutAudio.start(JSON.parse(json), app.ports.step.send);
+        });
+
+        app.ports.stopJs.subscribe((param) => {
+             ShoutAudio.stop();
+        });
     </script>
 </body>
 </html>

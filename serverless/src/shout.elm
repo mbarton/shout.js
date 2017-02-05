@@ -24,7 +24,7 @@ type Msg =
   Reset |
   ToggleNote String Int |
   TogglePlayback |
-  Step Time |
+  Step Int |
   DownloadedSample String
 
 updateNote: Int -> Track -> Track
@@ -59,13 +59,14 @@ update msg model =
       let
         runtime = model.runtime
         playing = not runtime.playing
-        step = if(playing) then 0 else -1
+
+        command = if (playing) then Interop.play else Interop.stop
 
         updated = updateRuntime model (\runtime ->
-          { runtime | playing = playing, step = step}
+          { runtime | playing = playing, step = -1 }
         )
       in
-        (updated, Cmd.none)
+        (updated, (command model))
     
     Step _ ->
       let
@@ -87,13 +88,10 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  let
-    rate = (1 / (120 * 4)) * minute
-    ticker = if model.runtime.playing then Time.every rate Step else Sub.none
-    downloaded = Interop.downloadedSamples(DownloadedSample)
-  in
-    Sub.batch [ticker, downloaded]
-
+  Sub.batch [
+    Interop.downloadedSamples(DownloadedSample),
+    Interop.step(Step)
+  ]
 
 -- -- VIEW
 

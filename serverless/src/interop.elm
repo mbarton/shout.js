@@ -1,8 +1,9 @@
-port module Interop exposing (save, init, downloadedSamples)
+port module Interop exposing (save, init, downloadedSamples, play, stop, step)
 
 import Data exposing (Model, Track, default)
 import Dict exposing (Dict)
 import Set exposing (Set)
+-- import Json exposing (Json)
 import Decoders exposing (deserialise)
 import Encoders exposing (serialise)
 
@@ -32,11 +33,28 @@ downloadSamples model =
   in
     ({ model | runtime = updated}, downloadSamplesJs samples)
 
+play: Model -> Cmd msg
+play model =
+  playJs (serialise model)
 
--- outbound
+stop: Model -> Cmd msg
+stop model =
+  stopJs (serialise model)
+
+---------------------------------------------
 
 port saveJs : String -> Cmd msg
+
+--
 
 port downloadSamplesJs: List String -> Cmd msg
 
 port downloadedSamples: (String -> msg) -> Sub msg
+
+--
+
+port playJs: String -> Cmd msg
+
+port stopJs: String -> Cmd msg
+
+port step: (Int -> msg) -> Sub msg
