@@ -1,6 +1,7 @@
 import Html exposing (..)
 import Html.Attributes exposing (class, disabled, type_, classList, value)
 import Html.Events exposing (onClick)
+import Set exposing (Set)
 import Dict exposing (Dict)
 import Time exposing (Time, minute)
 import Debug exposing (log)
@@ -37,6 +38,10 @@ updateTrack: (Track -> Track) -> String -> Tracks -> Tracks
 updateTrack updateFn track tracks =
   Dict.update track (Maybe.map updateFn) tracks
 
+updateRuntime: Model -> (Runtime -> Runtime) -> Model
+updateRuntime model updateFn =
+  { model | runtime = (updateFn model.runtime) }
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
@@ -52,23 +57,28 @@ update msg model =
     
     TogglePlayback ->
       let
-        playing = not model.playing
+        runtime = model.runtime
+        playing = not runtime.playing
         step = if(playing) then 0 else -1
-      in
 
-      ({ model | playing = playing, step = step }, Cmd.none)
+        updated = updateRuntime model (\runtime ->
+          { runtime | playing = playing, step = step}
+        )
+      in
+        (updated, Cmd.none)
     
     Step _ ->
       let
-        nextStep = (model.step + 1) % 16
+        nextStep = (model.runtime.step + 1) % 16
+        updated = updateRuntime model (\runtime -> { runtime | step = nextStep})
       in
-        -- log(toString nextStep)
-        ({ model | step = nextStep}, Cmd.none)
+        (updated, Cmd.none)
 
     DownloadedSample sample ->
       let
-        track = updateTrack (\track -> { track | loading = False}) sample model.tracks
-        updated = { model | tracks = track }
+        updated = updateRuntime model (\runtime ->
+          { runtime | loading = Set.remove sample runtime.loading }
+        )
       in
         (updated, Cmd.none)
 
@@ -79,7 +89,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   let
     rate = (1 / (120 * 4)) * minute
-    ticker = if model.playing then Time.every rate Step else Sub.none
+    ticker = if model.runtime.playing then Time.every rate Step else Sub.none
     downloaded = Interop.downloadedSamples(DownloadedSample)
   in
     Sub.batch [ticker, downloaded]
@@ -121,10 +131,11 @@ renderLoading loading =
   else
     span [] []
 
-renderTrack: Int -> (String, Track) -> Html Msg
-renderTrack step (name, track) =
+renderTrack: Int -> Set String -> (String, Track) -> Html Msg
+renderTrack step samplesLoading (name, track) =
   let
     renderedNotes = List.indexedMap (renderNote name step) track.notes
+    loading = Set.member name samplesLoading
   in
     div [class "row"] [
       div [class "small-1 columns"] [
@@ -132,7 +143,7 @@ renderTrack step (name, track) =
           div [class "small-6 columns"] [
             strong [] [text name]
           ],
-          div [class "small-6 columns"] [renderLoading track.loading]
+          div [class "small-6 columns"] [renderLoading loading]
         ]
       ],
       div [class "small-11 columns"] (renderNoteBoxes renderedNotes)
@@ -178,11 +189,13 @@ bottomBar playing =
 view : Model -> Html Msg
 view model =
   let
+    { playing, step, loading } = model.runtime
+
     tracks = Dict.toList model.tracks
     ordered = List.sortBy (\track -> (Tuple.second track).position) tracks
-    rendered = List.map (renderTrack model.step) ordered
+    rendered = List.map (renderTrack step loading) ordered
 
-    top = [(topBar model.bpm model.playing), (br [] [])]
-    bottom = [(br [] []), (bottomBar model.playing)]
+    top = [(topBar model.bpm playing), (br [] [])]
+    bottom = [(br [] []), (bottomBar playing)]
   in
     div [] (top ++ rendered ++ bottom)
