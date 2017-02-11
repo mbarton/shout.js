@@ -75,7 +75,7 @@ topBar bpm playing generatingToken =
           input [type_ "text", disabled True, value (toString bpm)] []
         ],
         li [] [
-          button [type_ "button", class "button", disabled generatingToken, onClick GenerateLink] [
+          button [type_ "button", class "button", disabled generatingToken, onClick GenerateToken] [
             text "Share"
           ]
         ],

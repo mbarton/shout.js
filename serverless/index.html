@@ -46,7 +46,9 @@
         });
 
         app.ports.generateToken.subscribe(() => {
-            ShoutRtc.generateToken();
+            ShoutRtc.generateToken().then((token) => {
+                console.log(token);  
+            });
         });
     </script>
 </body>

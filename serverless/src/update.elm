@@ -11,7 +11,8 @@ type Msg =
   TogglePlayback |
   Step Int |
   DownloadedSample String |
-  GenerateLink
+  GenerateToken |
+  ShowToken String
 
 updateNote: Int -> Track -> Track
 updateNote indexToUpdate track =
@@ -71,8 +72,14 @@ update msg model =
       in
         (updated, Cmd.none)
 
-    GenerateLink ->
+    GenerateToken ->
       let
         updated = updateRtc model (\rtc -> { rtc | generatingToken = True })
       in
         (updated, Interop.generateToken "")
+    
+    ShowToken token ->
+      let
+        updated = updateRtc model (\rtc -> { rtc | token = Just token })
+      in
+        (updated, Cmd.none)

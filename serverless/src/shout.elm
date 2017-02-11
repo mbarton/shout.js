@@ -17,5 +17,6 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch [
     Interop.downloadedSamples(DownloadedSample),
-    Interop.step(Step)
+    Interop.step(Step),
+    Interop.showToken(ShowToken)
   ]

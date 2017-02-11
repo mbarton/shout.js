@@ -1,4 +1,4 @@
-port module Interop exposing (save, init, downloadedSamples, setPlayback, step, generateToken)
+port module Interop exposing (save, init, downloadedSamples, setPlayback, step, generateToken, showToken)
 
 import Data exposing (Model, Track, default)
 import Dict exposing (Dict)
@@ -58,3 +58,5 @@ port step: (Int -> msg) -> Sub msg
 --
 
 port generateToken: String -> Cmd msg
+
+port showToken: (String -> msg) -> Sub msg

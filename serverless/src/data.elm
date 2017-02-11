@@ -19,7 +19,8 @@ type alias Runtime = {
 }
 
 type alias Rtc = {
-  generatingToken: Bool
+  generatingToken: Bool,
+  token: Maybe String
 }
 
 type alias Model = {
@@ -39,7 +40,7 @@ runtimeAtStart =
 
 rtcAtStart: Rtc
 rtcAtStart =
-  { generatingToken = False }
+  { generatingToken = False, token = Nothing }
 
 default: Model
 default =
