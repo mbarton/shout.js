@@ -2,7 +2,7 @@ module Decoders exposing (deserialise)
 
 import Json.Decode exposing (..)
 import Dict exposing (Dict)
-import Data exposing (Track, Model, Tracks, default, runtimeAtStart)
+import Data exposing (Track, Model, Tracks, default, runtimeAtStart, rtcAtStart)
 
 -- {
 --   bpm: Int,
@@ -23,7 +23,7 @@ trackDecoder =
 modelDecoder: Decoder Model
 modelDecoder =
   let
-    adapter = (\bpm tracks -> { bpm = bpm, tracks = (Dict.fromList tracks), runtime = runtimeAtStart})
+    adapter = (\bpm tracks -> { bpm = bpm, tracks = (Dict.fromList tracks), runtime = runtimeAtStart, rtc = rtcAtStart})
   in
     map2 adapter (field "bpm" int) (field "tracks" (list trackDecoder))
 

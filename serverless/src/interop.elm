@@ -1,4 +1,4 @@
-port module Interop exposing (save, init, downloadedSamples, setPlayback, step)
+port module Interop exposing (save, init, downloadedSamples, setPlayback, step, generateToken)
 
 import Data exposing (Model, Track, default)
 import Dict exposing (Dict)
@@ -41,7 +41,7 @@ setPlayback playing =
 
 ---------------------------------------------
 
-port saveJs : String -> Cmd msg
+port saveJs: String -> Cmd msg
 
 --
 
@@ -54,3 +54,7 @@ port downloadedSamples: (String -> msg) -> Sub msg
 port playbackJs: Bool -> Cmd msg
 
 port step: (Int -> msg) -> Sub msg
+
+--
+
+port generateToken: String -> Cmd msg

@@ -18,10 +18,15 @@ type alias Runtime = {
   loading: Set String
 }
 
+type alias Rtc = {
+  generatingToken: Bool
+}
+
 type alias Model = {
   tracks: Tracks,
   bpm: Int,
-  runtime: Runtime
+  runtime: Runtime,
+  rtc: Rtc
 }
 
 notes: List Int -> Notes
@@ -31,6 +36,10 @@ notes enabled =
 runtimeAtStart: Runtime
 runtimeAtStart =
   { playing = False, step = -1, loading = Set.empty }
+
+rtcAtStart: Rtc
+rtcAtStart =
+  { generatingToken = False }
 
 default: Model
 default =
@@ -42,5 +51,6 @@ default =
         ("hihat", { position = 1, notes = notes [2, 6, 10, 14] }),
         ("snare", { position = 2, notes = notes [4, 12] })
       ],
-    runtime = runtimeAtStart
+    runtime = runtimeAtStart,
+    rtc = rtcAtStart
   }

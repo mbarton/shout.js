@@ -17,6 +17,7 @@
     <div id="main"></div>
     <!-- TODO MRB: is there a way of getting elm to smush my JS into the build? -->
     <script type="text/javascript" src="src/audio.js"></script>
+    <script type="text/javascript" src="src/rtc.js"></script>
     <script type="text/javascript" src="target/shout.js"></script>
     <script type="text/javascript">
         const node = document.getElementById('main');
@@ -42,6 +43,10 @@
             } else {
                 audio.stop();
             }
+        });
+
+        app.ports.generateToken.subscribe(() => {
+            ShoutRtc.generateToken();
         });
     </script>
 </body>
