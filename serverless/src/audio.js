@@ -68,16 +68,16 @@ const ShoutAudio = (function() {
                 ticker = null;
             },
 
-            downloadSample: (sample, callback) => {
+            downloadSample: (sample) => {
                 const path = `${samplePath}/${sample}.mp3`;
                 const request = new Request(path);
 
-                fetch(request).then((response) => {
+                return fetch(request).then((response) => {
                     return response.arrayBuffer();
                 }).then((buffer) => {
-                    ctx.decodeAudioData(buffer, (data) => {
+                    return ctx.decodeAudioData(buffer).then((data) => {
                         samples.set(sample, data);
-                        callback(sample);
+                        return sample;
                     });
                 });
             }

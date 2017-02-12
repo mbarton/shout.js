@@ -24,32 +24,29 @@
         const startData = localStorage.data ? localStorage.data : null;
 
         const app = Elm.Main.embed(node, startData);
-        const audio = ShoutAudio(app.ports.step.send);
+        const audio = ShoutAudio(null); //app.ports.step.send);
 
-        app.ports.saveJs.subscribe((data) => {
-            audio.setConfig(JSON.parse(data));
+        app.ports.save.subscribe((data) => {
             localStorage.data = data;
         });
 
-        app.ports.downloadSamplesJs.subscribe((samples) => {
-            samples.forEach((sample) => {
-                audio.downloadSample(sample, app.ports.downloadedSamples.send);
-            });
+        app.ports.download.subscribe((track) => {
+            audio.downloadSample(track).then(app.ports.downloaded.send);
         });
 
-        app.ports.playbackJs.subscribe((playing) => {
-            if(playing) {
-                audio.start();
-            } else {
-                audio.stop();
-            }
-        });
+        // app.ports.playbackJs.subscribe((playing) => {
+        //     if(playing) {
+        //         audio.start();
+        //     } else {
+        //         audio.stop();
+        //     }
+        // });
 
-        app.ports.generateToken.subscribe(() => {
-            ShoutRtc.generateToken().then((token) => {
-                console.log(token);  
-            });
-        });
+        // app.ports.generateToken.subscribe(() => {
+        //     ShoutRtc.generateToken().then((token) => {
+        //         console.log(token);  
+        //     });
+        // });
     </script>
 </body>
 </html>

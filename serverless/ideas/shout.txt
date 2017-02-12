@@ -1,0 +1,20 @@
+-- model
+
+{
+    sequencer: Sequencer,
+    transport: Transport
+}
+
+-- updates
+
+type Msg =
+    SequencerMsg
+
+
+-- subscriptions
+
+    ALL
+
+-- outbound ports
+
+    download String -> 

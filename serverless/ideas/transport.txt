@@ -1,0 +1,14 @@
+-- model
+
+{
+    playing: Bool
+}
+
+-- update
+
+type TransportMsg =
+    SetPlayback Bool
+
+-- outbound ports
+
+    setPlayback Bool

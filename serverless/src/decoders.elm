@@ -2,35 +2,36 @@ module Decoders exposing (deserialise)
 
 import Json.Decode exposing (..)
 import Dict exposing (Dict)
-import Data exposing (Track, Model, Tracks, default, runtimeAtStart, rtcAtStart)
+import Track
+import Sequencer
 
 -- {
 --   bpm: Int,
 --   tracks: List {
 --     name: String,
---     position: Int,
---     notes: List Bool
+--     index: Int,
+--     steps: List Bool
 --   }
 -- }
 
-trackDecoder: Decoder (String, Track)
+trackDecoder: Decoder (String, Track.Model)
 trackDecoder =
   let
-    adapter = (\name position notes -> (name, { position = position, notes = notes}))
+    adapter = \name index steps -> (name, Track.default name index steps)
   in
-    map3 adapter (field "name" string) (field "position" int) (field "notes" (list bool))
+    map3 adapter (field "name" string) (field "index" int) (field "steps" (list bool))
 
-modelDecoder: Decoder Model
+modelDecoder: Decoder Sequencer.Model
 modelDecoder =
   let
-    adapter = (\bpm tracks -> { bpm = bpm, tracks = (Dict.fromList tracks), runtime = runtimeAtStart, rtc = rtcAtStart})
+    adapter = (\bpm tracks -> { bpm = bpm, tracks = (Dict.fromList tracks) })
   in
     map2 adapter (field "bpm" int) (field "tracks" (list trackDecoder))
 
-deserialise: String -> Model
+deserialise: String -> Sequencer.Model
 deserialise json =
   case (decodeString modelDecoder json) of
     Ok model ->
       model
-    Err _ ->
-      default
+    Err stuff ->
+      Sequencer.default

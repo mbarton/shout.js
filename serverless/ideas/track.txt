@@ -1,0 +1,20 @@
+-- model
+
+Steps: List Bool
+
+{
+    name: String,
+    index: Int,
+    step: Maybe Int,
+    loading: Bool,
+    steps: Steps
+}
+
+-- updates
+
+type Msg =
+    SetStep Int Bool |
+    Step Maybe Int |
+    Loaded
+
+-- view

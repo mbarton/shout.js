@@ -1,0 +1,24 @@
+-- model
+
+{
+    bpm: Int,
+    tracks: Dict Track
+}
+
+-- updates
+
+type SequencerMsg =
+    SetBpm Int |
+    TrackMsg String TrackMsg
+
+-- subscriptions
+
+    downloaded String ->
+    step Int ->
+
+-- view
+
+-- outbound ports
+
+    bpm Int ->
+    save ->
