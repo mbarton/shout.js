@@ -122,18 +122,19 @@ update msg model =
 
 port save: String -> Cmd msg
 port download: String -> Cmd msg
-port downloaded: (String -> msg) -> Sub msg
-port step: (Int -> msg) -> Sub msg
+
 
 -- subscriptions
+
+port downloaded: (String -> msg) -> Sub msg
 
 subscriptions: Model -> Sub Msg
 subscriptions model =
   let
     downloadFn = \track -> (TrackMsg track Track.Loaded)
-    stepFn = \step -> (Step (Just step))
+    trackFn = (\track -> Sub.map (TrackMsg track.name) (Track.subscriptions track))
   in
-    Sub.batch [(downloaded downloadFn), (step stepFn)]
+    Sub.batch ([downloaded downloadFn] ++ List.map trackFn (Dict.values model.tracks))
 
 -- view
 

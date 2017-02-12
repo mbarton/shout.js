@@ -1,4 +1,4 @@
-module Track exposing (Model, Msg(SetStep, Loaded, Step), update, reset, default, view, serialise)
+port module Track exposing (Model, Msg(SetStep, Loaded, Step), update, reset, default, view, serialise, subscriptions)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, disabled, type_, classList)
@@ -62,10 +62,18 @@ update msg model =
       ({ model | loading = False}, Cmd.none)
 
 
+-- subscriptions
+
+port step: (Int -> msg) -> Sub msg
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  step (\step -> Step (Just step))
+
 -- views
 
-step: Model -> Int -> Bool -> Html Msg
-step track index enabled =
+renderStep: Model -> Int -> Bool -> Html Msg
+renderStep track index enabled =
   div [class "small-3 columns"] [
       button [
         type_ "button",
@@ -101,7 +109,7 @@ loading loading =
 view: Model -> Html Msg
 view model = 
   let
-    steps = List.indexedMap (step model) model.steps 
+    steps = List.indexedMap (renderStep model) model.steps 
   in
     div [class "row"] [
       div [class "small-1 columns"] [
